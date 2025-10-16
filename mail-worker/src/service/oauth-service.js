@@ -95,14 +95,14 @@ const oauthService = {
                 return record;
         },
 
-        getProviderConfig(c, provider) {
+        getProviderConfig(c, provider, options = {}) {
                 if (provider !== 'github') {
                         throw new BizError(t('oauthUnsupportedProvider'));
                 }
 
                 const clientId = c.env.githubClientId;
                 const clientSecret = c.env.githubClientSecret;
-                const redirectUri = c.env.githubRedirectUri;
+                const redirectUri = this.normalizeRedirectUri(c.env.githubRedirectUri, provider);
 
                 if (!clientId || !clientSecret || !redirectUri) {
                         throw new BizError(t('oauthProviderDisabled'));
@@ -114,6 +114,24 @@ const oauthService = {
                         redirectUri,
                         scope: 'read:user user:email'
                 };
+        },
+
+        normalizeRedirectUri(rawUri, provider) {
+                if (!rawUri) {
+                        return '';
+                }
+
+                try {
+                        const parsed = new URL(rawUri);
+                        const trimmedPath = parsed.pathname.replace(/\/\+\$/, '');
+
+                        parsed.pathname = trimmedPath || `/oauth/${provider}/callback`;
+
+                        return parsed.toString();
+                } catch (error) {
+                        console.error('Failed to normalize redirect URI', error);
+                        return '';
+                }
         },
 
         async fetchGitHubProfile(c, code) {

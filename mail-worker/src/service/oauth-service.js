@@ -102,10 +102,25 @@ const oauthService = {
 
                 const clientId = c.env.githubClientId;
                 const clientSecret = c.env.githubClientSecret;
-                let redirectUri = c.env.githubRedirectUri?.trim();
+                const configuredRedirect = this.parseUrl(c.env.githubRedirectUri?.trim());
+                const overrideOrigin = this.parseUrl(options.redirectOrigin);
+                let redirectUri = '';
 
-                if (!redirectUri) {
-                        redirectUri = this.deriveRedirectUri(c, provider, options.redirectOrigin);
+                if (overrideOrigin) {
+                        const target = new URL(overrideOrigin.origin);
+
+                        if (configuredRedirect) {
+                                target.pathname = configuredRedirect.pathname;
+                                target.search = configuredRedirect.search;
+                                target.hash = configuredRedirect.hash;
+                                redirectUri = target.toString();
+                        } else {
+                                redirectUri = `${overrideOrigin.origin.replace(/\/+$, '')}/oauth/${provider}/callback`;
+                        }
+                } else if (configuredRedirect) {
+                        redirectUri = configuredRedirect.toString();
+                } else {
+                        redirectUri = this.deriveRedirectUri(c, provider);
                 }
 
                 if (!clientId || !clientSecret || !redirectUri) {

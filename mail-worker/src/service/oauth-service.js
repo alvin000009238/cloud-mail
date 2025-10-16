@@ -95,7 +95,7 @@ const oauthService = {
                 return record;
         },
 
-        getProviderConfig(c, provider) {
+        getProviderConfig(c, provider, options = {}) {
                 if (provider !== 'github') {
                         throw new BizError(t('oauthUnsupportedProvider'));
                 }

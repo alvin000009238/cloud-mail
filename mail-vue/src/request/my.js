@@ -1,5 +1,13 @@
 import http from '@/axios/index.js';
 
+function currentOrigin() {
+    if (typeof window !== 'undefined' && window.location?.origin) {
+        return window.location.origin;
+    }
+
+    return '';
+}
+
 export function loginUserInfo() {
     return http.get('/my/loginUserInfo')
 }

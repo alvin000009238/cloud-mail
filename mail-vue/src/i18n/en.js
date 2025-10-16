@@ -37,6 +37,7 @@ const en = {
     githubUnbound: 'Not linked',
     githubBindSuccess: 'GitHub account linked successfully',
     githubUnbindSuccess: 'GitHub account unlinked',
+    githubBindHint: 'You will be redirected to {url}. Make sure the domain resolves before continuing.',
     delAccount: 'Delete Account',
     delAccountMsg: 'This will permanently delete your account and data. It cannot be reactivated.',
     totalReceived: 'Total Received',

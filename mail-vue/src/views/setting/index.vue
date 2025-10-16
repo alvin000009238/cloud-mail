@@ -42,6 +42,9 @@
           <template v-else>
             <span>{{ $t('githubUnbound') }}</span>
             <el-button size="small" type="primary" :loading="bindLoading" @click="bindGitHub">{{$t('bind')}}</el-button>
+            <span v-if="githubCallbackUrl" class="oauth-hint">
+              {{ $t('githubBindHint', { url: githubCallbackUrl }) }}
+            </span>
           </template>
         </div>
       </div>
@@ -85,6 +88,19 @@ const unbindLoading = ref(false)
 const githubBinding = computed(() => {
   const bindings = userStore.user?.oauthBindings || []
   return bindings.find(item => item.provider === 'github') || null
+})
+
+const githubCallbackUrl = computed(() => {
+  if (typeof window === 'undefined') {
+    return ''
+  }
+
+  try {
+    return new URL('/oauth/github/callback', window.location.origin).href
+  } catch (error) {
+    console.warn('Failed to build GitHub callback URL', error)
+    return `${window.location.origin}/oauth/github/callback`
+  }
 })
 
 defineOptions({
@@ -315,6 +331,12 @@ function submitPwd() {
         .oauth-sub {
           font-size: 12px;
           color: var(--regular-text-color);
+        }
+
+        .oauth-hint {
+          font-size: 12px;
+          color: var(--regular-text-color);
+          flex-basis: 100%;
         }
       }
 

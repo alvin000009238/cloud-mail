@@ -37,6 +37,7 @@ const zh = {
     githubUnbound: '未绑定',
     githubBindSuccess: 'GitHub 账号绑定成功',
     githubUnbindSuccess: 'GitHub 账号已解绑',
+    githubBindHint: '將會重新導向至 {url}，請確認網域是否正確後再繼續。',
     delAccount: '删除账户',
     delAccountMsg: '此操作将永久删除您的账户及其所有数据，无法恢复',
     totalReceived: '收件数量',

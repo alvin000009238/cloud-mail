@@ -1,5 +1,13 @@
 import http from '@/axios/index.js';
 
+function currentOrigin() {
+    if (typeof window !== 'undefined' && window.location?.origin) {
+        return window.location.origin;
+    }
+
+    return '';
+}
+
 export function loginUserInfo() {
     return http.get('/my/loginUserInfo')
 }
@@ -13,7 +21,9 @@ export function userDelete() {
 }
 
 export function myOAuthAuthorize(provider) {
-    return http.get(`/my/oauth/${provider}/authorize`)
+    return http.get(`/my/oauth/${provider}/authorize`, {
+        params: { redirect_origin: currentOrigin() }
+    })
 }
 
 export function myOAuthCallback(provider, payload) {

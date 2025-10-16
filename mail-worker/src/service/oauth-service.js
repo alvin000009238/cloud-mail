@@ -17,7 +17,7 @@ const OAUTH_STATE_TTL = 60 * 5;
 const oauthService = {
 
         async authorize(c, provider, options = {}) {
-                const config = this.getProviderConfig(c, provider);
+                const config = this.getProviderConfig(c, provider, options);
                 const state = uuidv4();
                 const stateData = { provider, mode: options.mode || 'login' };
 
@@ -95,7 +95,7 @@ const oauthService = {
                 return record;
         },
 
-        getProviderConfig(c, provider) {
+        getProviderConfig(c, provider, options = {}) {
                 if (provider !== 'github') {
                         throw new BizError(t('oauthUnsupportedProvider'));
                 }
@@ -105,7 +105,7 @@ const oauthService = {
                 let redirectUri = c.env.githubRedirectUri?.trim();
 
                 if (!redirectUri) {
-                        redirectUri = this.deriveRedirectUri(c, provider);
+                        redirectUri = this.deriveRedirectUri(c, provider, options.redirectOrigin);
                 }
 
                 if (!clientId || !clientSecret || !redirectUri) {
@@ -120,7 +120,13 @@ const oauthService = {
                 };
         },
 
-        deriveRedirectUri(c, provider) {
+        deriveRedirectUri(c, provider, overrideOrigin) {
+                const override = this.parseUrl(overrideOrigin);
+
+                if (override) {
+                        return `${override.origin.replace(/\/+$, '')}/oauth/${provider}/callback`;
+                }
+
                 const origin = this.extractOrigin(c);
 
                 if (!origin) {
@@ -131,6 +137,18 @@ const oauthService = {
         },
 
         extractOrigin(c) {
+                const forwardedHost = c.req.header('x-forwarded-host');
+
+                if (forwardedHost) {
+                        const host = forwardedHost.split(',')[0]?.trim();
+
+                        if (host) {
+                                const protocol = c.req.header('x-forwarded-proto') || 'https';
+
+                                return `${protocol}://${host}`;
+                        }
+                }
+
                 const originHeader = c.req.header('origin');
                 const parsedOrigin = this.parseUrl(originHeader);
 

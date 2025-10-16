@@ -22,7 +22,12 @@ app.delete('/my/delete', async (c) => {
 
 app.get('/my/oauth/:provider/authorize', async (c) => {
         const { provider } = c.req.param();
-        const data = await oauthService.authorize(c, provider, { mode: 'bind', userId: userContext.getUserId(c) });
+        const query = c.req.query();
+        const data = await oauthService.authorize(c, provider, {
+                mode: 'bind',
+                userId: userContext.getUserId(c),
+                redirectOrigin: query?.redirect_origin
+        });
         return c.json(result.ok(data));
 });
 

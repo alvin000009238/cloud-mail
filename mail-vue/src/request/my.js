@@ -21,9 +21,7 @@ export function userDelete() {
 }
 
 export function myOAuthAuthorize(provider) {
-    return http.get(`/my/oauth/${provider}/authorize`, {
-        params: { redirect_origin: currentOrigin() }
-    })
+    return http.get(`/my/oauth/${provider}/authorize`)
 }
 
 export function myOAuthCallback(provider, payload) {

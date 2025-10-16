@@ -17,7 +17,7 @@ const OAUTH_STATE_TTL = 60 * 5;
 const oauthService = {
 
         async authorize(c, provider, options = {}) {
-                const config = this.getProviderConfig(c, provider, options);
+                const config = this.getProviderConfig(c, provider);
                 const state = uuidv4();
                 const stateData = { provider, mode: options.mode || 'login' };
 

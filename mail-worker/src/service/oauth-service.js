@@ -102,26 +102,7 @@ const oauthService = {
 
                 const clientId = c.env.githubClientId;
                 const clientSecret = c.env.githubClientSecret;
-                const configuredRedirect = this.parseUrl(c.env.githubRedirectUri?.trim());
-                const overrideOrigin = this.parseUrl(options.redirectOrigin);
-                let redirectUri = '';
-
-                if (overrideOrigin) {
-                        const target = new URL(overrideOrigin.origin);
-
-                        if (configuredRedirect) {
-                                target.pathname = configuredRedirect.pathname;
-                                target.search = configuredRedirect.search;
-                                target.hash = configuredRedirect.hash;
-                                redirectUri = target.toString();
-                        } else {
-                                redirectUri = `${overrideOrigin.origin.replace(/\/+$, '')}/oauth/${provider}/callback`;
-                        }
-                } else if (configuredRedirect) {
-                        redirectUri = configuredRedirect.toString();
-                } else {
-                        redirectUri = this.deriveRedirectUri(c, provider);
-                }
+                const redirectUri = this.normalizeRedirectUri(c.env.githubRedirectUri, provider);
 
                 if (!clientId || !clientSecret || !redirectUri) {
                         throw new BizError(t('oauthProviderDisabled'));
@@ -135,61 +116,21 @@ const oauthService = {
                 };
         },
 
-        deriveRedirectUri(c, provider, overrideOrigin) {
-                const override = this.parseUrl(overrideOrigin);
-
-                if (override) {
-                        return `${override.origin.replace(/\/+$, '')}/oauth/${provider}/callback`;
-                }
-
-                const origin = this.extractOrigin(c);
-
-                if (!origin) {
+        normalizeRedirectUri(rawUri, provider) {
+                if (!rawUri) {
                         return '';
                 }
 
-                return `${origin.replace(/\/+$, '')}/oauth/${provider}/callback`;
-        },
-
-        extractOrigin(c) {
-                const forwardedHost = c.req.header('x-forwarded-host');
-
-                if (forwardedHost) {
-                        const host = forwardedHost.split(',')[0]?.trim();
-
-                        if (host) {
-                                const protocol = c.req.header('x-forwarded-proto') || 'https';
-
-                                return `${protocol}://${host}`;
-                        }
-                }
-
-                const originHeader = c.req.header('origin');
-                const parsedOrigin = this.parseUrl(originHeader);
-
-                if (parsedOrigin) {
-                        return parsedOrigin.origin;
-                }
-
-                const referer = c.req.header('referer');
-                const parsedReferer = this.parseUrl(referer);
-
-                if (parsedReferer) {
-                        return parsedReferer.origin;
-                }
-
-                return '';
-        },
-
-        parseUrl(value) {
-                if (!value) {
-                        return null;
-                }
-
                 try {
-                        return new URL(value);
-                } catch (err) {
-                        return null;
+                        const parsed = new URL(rawUri);
+                        const trimmedPath = parsed.pathname.replace(/\/\+\$/, '');
+
+                        parsed.pathname = trimmedPath || `/oauth/${provider}/callback`;
+
+                        return parsed.toString();
+                } catch (error) {
+                        console.error('Failed to normalize redirect URI', error);
+                        return '';
                 }
         },
 

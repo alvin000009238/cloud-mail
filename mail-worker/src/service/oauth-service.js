@@ -102,7 +102,11 @@ const oauthService = {
 
                 const clientId = c.env.githubClientId;
                 const clientSecret = c.env.githubClientSecret;
-                const redirectUri = c.env.githubRedirectUri;
+                let redirectUri = c.env.githubRedirectUri?.trim();
+
+                if (!redirectUri) {
+                        redirectUri = this.deriveRedirectUri(c, provider);
+                }
 
                 if (!clientId || !clientSecret || !redirectUri) {
                         throw new BizError(t('oauthProviderDisabled'));
@@ -114,6 +118,46 @@ const oauthService = {
                         redirectUri,
                         scope: 'read:user user:email'
                 };
+        },
+
+        deriveRedirectUri(c, provider) {
+                const origin = this.extractOrigin(c);
+
+                if (!origin) {
+                        return '';
+                }
+
+                return `${origin.replace(/\/+$, '')}/oauth/${provider}/callback`;
+        },
+
+        extractOrigin(c) {
+                const originHeader = c.req.header('origin');
+                const parsedOrigin = this.parseUrl(originHeader);
+
+                if (parsedOrigin) {
+                        return parsedOrigin.origin;
+                }
+
+                const referer = c.req.header('referer');
+                const parsedReferer = this.parseUrl(referer);
+
+                if (parsedReferer) {
+                        return parsedReferer.origin;
+                }
+
+                return '';
+        },
+
+        parseUrl(value) {
+                if (!value) {
+                        return null;
+                }
+
+                try {
+                        return new URL(value);
+                } catch (err) {
+                        return null;
+                }
         },
 
         async fetchGitHubProfile(c, code) {

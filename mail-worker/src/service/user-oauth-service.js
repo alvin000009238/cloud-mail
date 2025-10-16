@@ -30,8 +30,16 @@ const userOAuthService = {
                         .get();
         },
 
-        async bind(c, userId, provider, payload) {
-                const { externalId, email = '', name = '', username = '', avatar = '' } = payload;
+        async bind(c, userId, provider, payload = {}) {
+                const {
+                        externalId: providedExternalId,
+                        id = '',
+                        email = '',
+                        name = '',
+                        username = '',
+                        avatar = ''
+                } = payload;
+                const externalId = providedExternalId || (id ? String(id) : '');
 
                 if (!externalId) {
                         throw new BizError(t('oauthMissingExternalId'));

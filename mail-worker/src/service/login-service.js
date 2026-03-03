@@ -42,10 +42,10 @@ const loginService = {
 		}
 
 		if (emailUtils.getName(email).length < minEmailPrefix) {
-			throw new BizError(t('minEmailPrefix', { msg: minEmailPrefix } ));
+			throw new BizError(t('minEmailPrefix', { msg: minEmailPrefix }));
 		}
 
-		if (emailPrefixFilter.some(content => emailUtils.getName(email).includes(content)))  {
+		if (emailPrefixFilter.some(content => emailUtils.getName(email).includes(content))) {
 			throw new BizError(t('banEmailPrefix'));
 		}
 
@@ -100,14 +100,14 @@ const loginService = {
 
 		const roleRow = await roleService.selectById(c, type || defType);
 
-		if(!roleService.hasAvailDomainPerm(roleRow.availDomain, email)) {
+		if (!roleService.hasAvailDomainPerm(roleRow.availDomain, email)) {
 
 			if (type) {
-				throw new BizError(t('noDomainPermRegKey'),403)
+				throw new BizError(t('noDomainPermRegKey'), 403)
 			}
 
 			if (defType) {
-				throw new BizError(t('noDomainPermReg'),403)
+				throw new BizError(t('noDomainPermReg'), 403)
 			}
 
 		}
@@ -116,19 +116,19 @@ const loginService = {
 
 		if (registerVerify === settingConst.registerVerify.OPEN) {
 			regVerifyOpen = true
-			await turnstileService.verify(c,token)
+			await turnstileService.verify(c, token)
 		}
 
 		if (registerVerify === settingConst.registerVerify.COUNT) {
 			regVerifyOpen = await verifyRecordService.isOpenRegVerify(c, regVerifyCount);
 			if (regVerifyOpen) {
-				await turnstileService.verify(c,token)
+				await turnstileService.verify(c, token)
 			}
 		}
 
 		const { salt, hash } = await saltHashUtils.hashPassword(password);
 
-		const userId = await userService.insert(c, { email, regKeyId,password: hash, salt, type: type || defType });
+		const userId = await userService.insert(c, { email, regKeyId, password: hash, salt, type: type || defType });
 
 		await accountService.insert(c, { userId: userId, email, name: emailUtils.getName(email) });
 
@@ -140,10 +140,10 @@ const loginService = {
 
 		if (registerVerify === settingConst.registerVerify.COUNT && !regVerifyOpen) {
 			const row = await verifyRecordService.increaseRegCount(c);
-			return {regVerifyOpen: row.count >= regVerifyCount}
+			return { regVerifyOpen: row.count >= regVerifyCount }
 		}
 
-		return {regVerifyOpen}
+		return { regVerifyOpen }
 
 	},
 
@@ -213,11 +213,11 @@ const loginService = {
 			throw new BizError(t('notExistUser'));
 		}
 
-		if(userRow.isDel === isDel.DELETE) {
+		if (userRow.isDel === isDel.DELETE) {
 			throw new BizError(t('isDelUser'));
 		}
 
-		if(userRow.status === userConst.status.BAN) {
+		if (userRow.status === userConst.status.BAN) {
 			throw new BizError(t('isBanUser'));
 		}
 
@@ -225,8 +225,12 @@ const loginService = {
 			throw new BizError(t('IncorrectPwd'));
 		}
 
+		return await this.createSession(c, userRow);
+	},
+
+	async createSession(c, userRow) {
 		const uuid = uuidv4();
-		const jwt = await JwtUtils.generateToken(c,{ userId: userRow.userId, token: uuid });
+		const jwt = await JwtUtils.generateToken(c, { userId: userRow.userId, token: uuid });
 
 		let authInfo = await c.env.kv.get(KvConst.AUTH_INFO + userRow.userId, { type: 'json' });
 
@@ -257,7 +261,7 @@ const loginService = {
 	},
 
 	async logout(c, userId) {
-		const token =userContext.getToken(c);
+		const token = userContext.getToken(c);
 		const authInfo = await c.env.kv.get(KvConst.AUTH_INFO + userId, { type: 'json' });
 		const index = authInfo.tokens.findIndex(item => item === token);
 		authInfo.tokens.splice(index, 1);

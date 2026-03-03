@@ -61,7 +61,16 @@
                              v-model="setting.manyEmail"/>
                 </div>
               </div>
-
+              <div class="setting-item">
+                <div>
+                  <span>{{ $t('emailPrefix') }}</span>
+                </div>
+                <div class="forward">
+                  <el-button class="opt-button" size="small" type="primary" @click="openEmailPrefix">
+                    <Icon icon="fluent:settings-48-regular" width="18" height="18"/>
+                  </el-button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -96,7 +105,7 @@
                       fit="cover"
                   >
                     <template #error>
-                      <div class="error-image" @click="openSetBackground">
+                      <div class="error-image">
                         <Icon icon="ph:image" width="24" height="24"/>
                       </div>
                     </template>
@@ -136,11 +145,11 @@
                   <el-select
                       @change="change"
                       :style="`width: ${ locale === 'en' ? 100 : 80 }px;`"
-                      v-model="setting.autoRefreshTime"
+                      v-model="setting.autoRefresh"
                       placeholder="Select"
                   >
                     <el-option
-                        v-for="item in options"
+                        v-for="item in authRefreshOptions"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value"
@@ -188,7 +197,12 @@
             <div class="card-title">{{ $t('oss') }}</div>
             <div class="card-content">
               <div class="r2domain-item">
-                <div><span>{{ $t('osDomain') }}</span></div>
+                <div>
+                  <span>{{ $t('osDomain') }}</span>
+                  <el-tooltip effect="dark" :content="$t('ossDomainDesc')">
+                    <Icon class="warning" icon="fe:warning" width="18" height="18"/>
+                  </el-tooltip>
+                </div>
                 <div class="r2domain">
                   <span>{{ setting.r2Domain || '' }}</span>
                   <el-button class="opt-button" size="small" type="primary" @click="r2DomainShow = true">
@@ -197,11 +211,23 @@
                 </div>
               </div>
               <div class="setting-item">
-                <div><span>{{ $t('s3Configuration') }}</span></div>
+                <div>
+                  <span>{{ $t('s3Configuration') }}</span>
+                </div>
                 <div class="r2domain">
                   <el-button class="opt-button" size="small" type="primary" @click="addS3Show = true">
                     <Icon icon="fluent:settings-48-regular" width="16" height="16"/>
                   </el-button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <div>
+                  <span>{{ $t('storageType') }}</span>
+                </div>
+                <div class="r2domain">
+                  <div class="storage-type">
+                    <el-tag>{{ setting.storageType }}</el-tag>
+                  </div>
                 </div>
               </div>
             </div>
@@ -332,7 +358,7 @@
               <div class="concerning-item">
                 <span>{{ $t('version') }} :</span>
                 <el-badge is-dot :hidden="!hasUpdate">
-                  <el-button @click="jump('https://github.com/eoao/cloud-mail/releases')">
+                  <el-button @click="jump('https://github.com/maillab/cloud-mail/releases')">
                     {{ currentVersion }}
                     <template #icon>
                       <Icon icon="qlementine-icons:version-control-16" style="font-size: 20px" color="#1890FF"/>
@@ -343,7 +369,7 @@
               <div class="concerning-item">
                 <span>{{ $t('community') }} : </span>
                 <div class="community">
-                  <el-button @click="jump('https://github.com/eoao/cloud-mail')">
+                  <el-button @click="jump('https://github.com/maillab/cloud-mail')">
                     Github
                     <template #icon>
                       <Icon icon="codicon:github-inverted" width="22" height="22"/>
@@ -468,6 +494,40 @@
           <el-input :placeholder="$t('tgBotToken')" v-model="tgBotToken"></el-input>
           <el-input-tag tag-type="warning" :placeholder="$t('toBotTokenDesc')" v-model="tgChatId"
                         @add-tag="addChatTag"></el-input-tag>
+          <el-input tag-type="warning" :placeholder="$t('customDomainDesc')" v-model="customDomain" ></el-input>
+          <div class="tg-msg-label">
+            <span>{{t('from')}}</span>
+            <el-select  v-model="tgMsgFrom" >
+              <el-option
+                  v-for="item in tgMsgFromOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              />
+            </el-select>
+          </div>
+          <div class="tg-msg-label">
+            <span>{{t('recipient')}}</span>
+            <el-select  v-model="tgMsgTo" >
+              <el-option
+                  v-for="item in tgMsgToOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              />
+            </el-select>
+          </div>
+          <div class="tg-msg-label">
+            <span>{{t('emailText')}}</span>
+            <el-select  v-model="tgMsgText" >
+              <el-option
+                  v-for="item in tgMsgTextOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              />
+            </el-select>
+          </div>
         </div>
         <template #footer>
           <div class="dialog-footer">
@@ -636,12 +696,37 @@
           <el-input class="dialog-input" type="text" placeholder="Region" v-model="s3.region"/>
           <el-input class="dialog-input" type="text" :placeholder="setting.s3AccessKey || 'Access Key'"
                     v-model="s3.s3AccessKey"/>
-          <el-input type="text" :placeholder="setting.s3SecretKey || 'Secret Key'" v-model="s3.s3SecretKey"/>
+          <el-input style="margin-bottom: 10px" type="text" :placeholder="setting.s3SecretKey || 'Secret Key'" v-model="s3.s3SecretKey"/>
+          <div class="force-path-style">
+            <div class="force-path-style-left">
+              <span>ForcePathStyle</span>
+              <el-tooltip effect="dark" :content="$t('forcePathStyleDesc')">
+                <Icon class="warning" icon="fe:warning" width="18" height="18"/>
+              </el-tooltip>
+            </div>
+            <el-switch :before-change="beforeChange" :active-value="0" :inactive-value="1"
+                       v-model="s3.forcePathStyle"/>
+          </div>
           <div class="s3-button">
             <el-button :loading="clearS3Loading" @click="clearS3">{{ t('clear') }}</el-button>
             <el-button type="primary" :loading="settingLoading && !clearS3Loading" @click="saveS3">{{ t('save') }}</el-button>
           </div>
         </form>
+      </el-dialog>
+      <el-dialog v-model="emailPrefixShow" :title="t('emailPrefix')"  @closed="resetEmailPrefix"  >
+        <div class="email-prefix">
+          <div>{{ t('atLeast') }}</div>
+          <el-input-number v-model="minEmailPrefix" :min="1" :max="20" style="width: 150px" >
+            <template #suffix>
+              <span>{{ t('character') }}</span>
+            </template>
+          </el-input-number>
+        </div>
+        <div class="prefix-filter">
+          <div style="margin-bottom: 10px;">{{ t('mustNotContain') }}</div>
+          <el-input-tag style="margin-bottom: 10px;" v-model="emailPrefixFilter" :placeholder="t('mustNotContainDesc')"  />
+        </div>
+        <el-button type="primary" style="width: 100%;" :loading="settingLoading" @click="saveEmailPrefix">{{ $t('save') }}</el-button>
       </el-dialog>
     </el-scrollbar>
   </div>
@@ -649,7 +734,7 @@
 
 <script setup>
 import {computed, defineOptions, reactive, ref} from "vue";
-import {physicsDeleteAll, setBackground, settingQuery, settingSet} from "@/request/setting.js";
+import {deleteBackground, setBackground, settingQuery, settingSet} from "@/request/setting.js";
 import {useSettingStore} from "@/store/setting.js";
 import {useUiStore} from "@/store/ui.js";
 import {useUserStore} from "@/store/user.js";
@@ -669,7 +754,7 @@ defineOptions({
   name: 'sys-setting'
 })
 
-const currentVersion = 'v2.2.0'
+const currentVersion = 'v2.9.0'
 const hasUpdate = ref(false)
 let getUpdateErrorCount = 1;
 const {t, locale} = useI18n();
@@ -686,6 +771,7 @@ const tgSettingShow = ref(false)
 const noticePopupShow = ref(false)
 const thirdEmailShow = ref(false)
 const forwardRulesShow = ref(false)
+const emailPrefixShow = ref(false)
 const showResendList = ref(false)
 const settingStore = useSettingStore();
 const uiStore = useUiStore();
@@ -695,6 +781,8 @@ const settingLoading = ref(false)
 const clearS3Loading = ref(false)
 const r2DomainInput = ref('')
 const loginOpacity = ref(0)
+const minEmailPrefix = ref(0)
+const emailPrefixFilter = ref([])
 const backgroundUrl = ref('')
 let backgroundFile = {}
 const showSetBackground = ref(false)
@@ -718,7 +806,8 @@ const s3 = reactive({
   endpoint: '',
   region: '',
   s3AccessKey: '',
-  s3SecretKey: ''
+  s3SecretKey: '',
+  forcePathStyle: 1
 })
 
 const noticeForm = reactive({
@@ -738,17 +827,17 @@ const regKeyOptions = computed(() => [
   {label: t('optional'), value: 2},
 ])
 
-const options = computed(() => [
+const authRefreshOptions = computed(() => [
   {label: t('disable'), value: 0},
   {label: '3s', value: 3},
   {label: '5s', value: 5},
-  {label: '7s', value: 7},
   {label: '10s', value: 10},
   {label: '15s', value: 15},
-  {label: '20s', value: 20}
+  {label: '20s', value: 20},
 ])
 
 const tgChatId = ref([])
+const customDomain = ref('')
 const tgBotStatus = ref(0)
 const tgBotToken = ref('')
 const forwardEmail = ref([])
@@ -757,6 +846,14 @@ const emailColumnWidth = ref(0)
 const tokenColumnWidth = ref(0)
 const ruleType = ref(0)
 const ruleEmail = ref([])
+const tgMsgFrom = ref('')
+const tgMsgTo = ref('')
+const tgMsgText = ref('')
+
+const tgMsgFromOption = [{label: t('show'), value: 'show'}, {label: t('hide'), value: 'hide'}, {label: t('onlyName'), value:'only-name'}]
+const tgMsgToOption = [{label: t('show'), value: 'show'}, {label: t('hide'), value: 'hide'}]
+const tgMsgTextOption = [{label: t('show'), value: 'show'}, {label: t('hide'), value: 'hide'}]
+const tgMsgLabelWidth = computed(() => locale.value === 'en' ? '120px' : '100px');
 
 getSettings()
 getUpdate()
@@ -767,6 +864,7 @@ function getSettings() {
     settingStore.domainList = settingData.domainList;
     resendTokenForm.domain = setting.value.domainList[0]
     loginOpacity.value = setting.value.loginOpacity
+    minEmailPrefix.value = setting.value.minEmailPrefix
     firstLoading.value = false
     backgroundUrl.value = setting.value.background?.startsWith('http') ? setting.value.background : ''
     editTitle.value = setting.value.title
@@ -775,6 +873,7 @@ function getSettings() {
     regVerifyCount.value = setting.value.regVerifyCount
     resetNoticeForm()
     resetAddS3Form()
+    resetEmailPrefix()
   })
 }
 
@@ -799,6 +898,7 @@ function resetAddS3Form() {
   s3.region = setting.value.region
   s3.s3AccessKey = ''
   s3.s3SecretKey = ''
+  s3.forcePathStyle = setting.value.forcePathStyle
 }
 
 const resendList = computed(() => {
@@ -825,7 +925,7 @@ const resendList = computed(() => {
 
 function getUpdate() {
   if (getUpdateErrorCount > 5 || !getUpdateErrorCount) return
-  axios.get('https://api.github.com/repos/eoao/cloud-mail/releases/latest').then(({data}) => {
+  axios.get('https://api.github.com/repos/maillab/cloud-mail/releases/latest').then(({data}) => {
     hasUpdate.value = data.name !== currentVersion
     getUpdateErrorCount = 0
   }).catch(e => {
@@ -869,6 +969,10 @@ function closedSetBackground() {
 function openTgSetting() {
   tgBotStatus.value = setting.value.tgBotStatus
   tgBotToken.value = setting.value.tgBotToken
+  customDomain.value = setting.value.customDomain
+  tgMsgFrom.value = setting.value.tgMsgFrom
+  tgMsgText.value = setting.value.tgMsgText
+  tgMsgTo.value = setting.value.tgMsgTo
   tgChatId.value = []
   if (setting.value.tgChatId) {
     const list = setting.value.tgChatId.split(',')
@@ -915,6 +1019,10 @@ function openThirdEmailSetting() {
     forwardEmail.value.push(...list)
   }
   thirdEmailShow.value = true
+}
+
+function openEmailPrefix() {
+  emailPrefixShow.value = true
 }
 
 function openForwardRules() {
@@ -977,7 +1085,8 @@ function clearS3() {
     endpoint: '',
     region: '',
     s3AccessKey: '',
-    s3SecretKey: ''
+    s3SecretKey: '',
+    forcePathStyle: 1
   }
   clearS3Loading.value = true
   editSetting(form)
@@ -988,7 +1097,8 @@ function saveS3() {
   const form = {
     bucket: s3.bucket,
     endpoint: s3.endpoint,
-    region: s3.region
+    region: s3.region,
+    forcePathStyle: s3.forcePathStyle
   }
 
   if (s3.s3AccessKey) form.s3AccessKey = s3.s3AccessKey
@@ -1000,8 +1110,12 @@ function saveS3() {
 function tgBotSave() {
   const form = {
     tgBotToken: tgBotToken.value,
+    customDomain: customDomain.value,
     tgBotStatus: tgBotStatus.value,
-    tgChatId: tgChatId.value + ''
+    tgChatId: tgChatId.value + '',
+    tgMsgFrom: tgMsgFrom.value,
+    tgMsgText: tgMsgText.value,
+    tgMsgTo: tgMsgTo.value
   }
   editSetting(form)
 }
@@ -1029,30 +1143,22 @@ function doOpacityChange() {
   editSetting(form, true)
 }
 
+function resetEmailPrefix() {
+  minEmailPrefix.value = setting.value.minEmailPrefix
+  emailPrefixFilter.value = setting.value.emailPrefixFilter
+}
+
+function saveEmailPrefix() {
+  const form = {}
+  form.minEmailPrefix = minEmailPrefix.value
+  form.emailPrefixFilter = emailPrefixFilter.value
+  editSetting(form, true)
+}
+
 const opacityChange = debounce(doOpacityChange, 1000, {
   leading: false,
   trailing: true
 })
-
-function physicsDeleteAllData() {
-  ElMessageBox.prompt(t('clearAllDelConfirm'), {
-    confirmButtonText: t('confirm'),
-    cancelButtonText: t('cancel'),
-    dangerouslyUseHTMLString: true,
-    title: t('warning'),
-    type: 'warning',
-    inputPattern: new RegExp(`^${t('delInputPattern')}$`),
-    inputErrorMessage: t('inputErrorMessage'),
-  }).then(() => {
-    physicsDeleteAll().then(() => {
-      ElMessage({
-        message: t('delSuccessMsg'),
-        type: "success",
-        plain: true
-      })
-    })
-  })
-}
 
 function delBackground() {
   ElMessageBox.confirm(t('delBackgroundConfirm'), {
@@ -1060,9 +1166,15 @@ function delBackground() {
     cancelButtonText: t('cancel'),
     type: 'warning'
   }).then(() => {
-    backgroundUrl.value = ''
-    setting.value.background = null
-    editSetting({background: null})
+    deleteBackground().then(() => {
+      backgroundUrl.value = ''
+      setting.value.background = null
+      ElMessage({
+        message: t('delSuccessMsg'),
+        type: "success",
+        plain: true
+      })
+    })
   })
 }
 
@@ -1193,7 +1305,7 @@ function editSetting(settingForm, refreshStatus = true) {
       plain: true
     })
     if (setting.value.manyEmail === 1) {
-      accountStore.currentAccountId = userStore.user.accountId;
+      accountStore.currentAccountId = userStore.user.account.accountId;
     }
     if (refreshStatus) {
       getSettings()
@@ -1209,6 +1321,7 @@ function editSetting(settingForm, refreshStatus = true) {
     regVerifyCountShow.value = false
     noticePopupShow.value = false
     addS3Show.value = false
+    emailPrefixShow.value = false
   }).catch((e) => {
     loginOpacity.value = setting.value.loginOpacity
     setting.value = {...setting.value, ...JSON.parse(backup)}
@@ -1282,13 +1395,13 @@ function editSetting(settingForm, refreshStatus = true) {
 }
 
 .background {
-  width: 230px;
-  height: 120px;
+  width: 249px;
+  height: 140px;
   border-radius: 4px;
   border: 1px solid var(--light-border);
   @media (max-width: 500px) {
-    width: 150px;
-    height: 83px;
+    width: 160px;
+    height: 90px;
   }
 }
 
@@ -1368,7 +1481,7 @@ function editSetting(settingForm, refreshStatus = true) {
 }
 
 .warning {
-  margin-left: 4px;
+  margin-left: 2px;
   color: grey;
   cursor: pointer;
 }
@@ -1475,6 +1588,7 @@ function editSetting(settingForm, refreshStatus = true) {
 
     .forward-set-title {
       top: 1px;
+      padding-right: 5px;
       position: relative;
       font-size: 16px;
       font-weight: bold;;
@@ -1527,10 +1641,23 @@ function editSetting(settingForm, refreshStatus = true) {
 .forward-set-body {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 
   .el-switch {
     align-self: end;
+  }
+
+  > *:nth-child(-n+2) {
+    margin-bottom: 15px;
+  }
+
+  .tg-msg-label {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .el-select {
+      width: v-bind(tgMsgLabelWidth);
+    }
   }
 }
 
@@ -1550,6 +1677,16 @@ function editSetting(settingForm, refreshStatus = true) {
   width: fit-content !important;
 }
 
+.email-prefix {
+  display: flex;
+  justify-content: space-between;
+}
+
+.prefix-filter {
+  display: flex;
+  flex-direction: column;
+}
+
 .s3-button {
   display: grid;
   grid-template-columns: 80px 1fr;
@@ -1564,6 +1701,10 @@ function editSetting(settingForm, refreshStatus = true) {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
+
+  .storage-type {
+    margin-right: 3px;
+  }
 
   span {
     overflow: hidden;
@@ -1593,6 +1734,20 @@ function editSetting(settingForm, refreshStatus = true) {
 
 .dialog-input {
   margin-bottom: 15px;
+}
+
+.force-path-style {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  .force-path-style-left {
+    padding-left: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
 }
 
 .concerning-item {
@@ -1648,7 +1803,7 @@ function editSetting(settingForm, refreshStatus = true) {
 }
 
 form .el-button {
-  margin-top: 15px;
+  margin-top: 10px;
   width: 100%;
 }
 

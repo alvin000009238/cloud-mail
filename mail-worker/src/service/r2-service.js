@@ -1,32 +1,41 @@
 import s3Service from './s3-service';
 import settingService from './setting-service';
+import kvObjService from './kv-obj-service';
 
 const r2Service = {
 
-	async hasOSS(c) {
-
-		if (c.env.r2) {
-			return true;
-		}
+	async storageType(c) {
 
 		const setting = await settingService.query(c);
-		const { bucket, region, endpoint, s3AccessKey, s3SecretKey } = setting;
+		const { bucket, endpoint, s3AccessKey, s3SecretKey } = setting;
 
-		return !!(bucket && region && endpoint && s3AccessKey && s3SecretKey);
+		if (!!(bucket && endpoint && s3AccessKey && s3SecretKey)) {
+			return 'S3';
+		}
+
+		if (c.env.r2) {
+			return 'R2';
+		}
+
+		return 'KV';
 	},
 
 	async putObj(c, key, content, metadata) {
 
-		if (c.env.r2) {
+		const storageType = await this.storageType(c);
 
+		if (storageType === 'KV') {
+			await kvObjService.putObj(c, key, content, metadata);
+		}
+
+		if (storageType === 'R2') {
 			await c.env.r2.put(key, content, {
 				httpMetadata: { ...metadata }
 			});
+		}
 
-		} else {
-
+		if (storageType === 'S3') {
 			await s3Service.putObj(c, key, content, metadata);
-
 		}
 
 	},
@@ -37,14 +46,18 @@ const r2Service = {
 
 	async delete(c, key) {
 
-		if (c.env.r2) {
+		const storageType = await this.storageType(c);
 
+		if (storageType === 'KV') {
+			await kvObjService.deleteObj(c, key);
+		}
+
+		if (storageType === 'R2') {
 			await c.env.r2.delete(key);
+		}
 
-		} else {
-
+		if (storageType === 'S3'){
 			await s3Service.deleteObj(c, key);
-
 		}
 
 	}

@@ -1,28 +1,45 @@
-
 <p align="center">
-  <img src="doc/demo/logo.png" width="80px" />
+    <img src="doc/demo/logo.png" width="80px" />
+    <h1 align="center">Cloud Mail</h1>
+    <p align="center">A simple, responsive email service designed to run on Cloudflare Workers 🎉</p> 
+    <p align="center">
+       <a href="/README.md" style="margin-left: 5px">简体中文</a> | English 
+    </p>
+    <p align="center">
+        <a href="https://github.com/maillab/cloud-mail/tree/main?tab=MIT-1-ov-file" target="_blank" >
+            <img src="https://img.shields.io/badge/license-MIT-green" />
+        </a>    
+        <a href="https://github.com/maillab/cloud-mail/releases" target="_blank" >
+            <img src="https://img.shields.io/github/v/release/maillab/cloud-mail" alt="releases" />
+        </a>  
+        <a href="https://github.com/maillab/cloud-mail/issues" >
+            <img src="https://img.shields.io/github/issues/maillab/cloud-mail" alt="issues" />
+        </a>  
+        <a href="https://github.com/maillab/cloud-mail/stargazers" target="_blank">
+            <img src="https://img.shields.io/github/stars/maillab/cloud-mail" alt="stargazers" />
+        </a>  
+        <a href="https://github.com/maillab/cloud-mail/forks" target="_blank" >
+            <img src="https://img.shields.io/github/forks/maillab/cloud-mail" alt="forks" />
+        </a>
+    </p>
+    <p align="center">
+        <a href="https://trendshift.io/repositories/14418" target="_blank" >
+            <img src="https://trendshift.io/api/badge/repositories/14418" alt="trendshift" >
+        </a>
+    </p>
 </p>
 
-<div align="center">
-<h1>Cloud Mail</h1>
-</div>
-<div align="center">
-    <h4>A responsive email service built with Vue 3 that supports email sending and can be deployed on Cloudflare. 🎉</h4> 
-</div>
-
-
+## Description
+With only one domain, you can create multiple different email addresses, similar to major email platforms. This project can be deployed on Cloudflare Workers to reduce server costs and build your own email service.
 ## Project Showcase
 
-- [Online Demo](https://skymail.ink)<br>
+- [Live Demo](https://skymail.ink)<br>
 - [Deployment Guide](https://doc.skymail.ink/en/)<br>
-- [Beginner’s Guide – UI Deployment](https://doc.skymail.ink/en/guide/via-ui.html)
 
 
 | ![](/doc/demo/demo1.png) | ![](/doc/demo/demo2.png) |
-|--------------------------|---------------------|
+|--------------------------|--------------------------|
 | ![](/doc/demo/demo3.png) | ![](/doc/demo/demo4.png) |
-| ![](/doc/demo/demo5.png) | ![](/doc/demo/demo6.png) |
-| ![](/doc/demo/demo7.png) | ![](/doc/demo/demo8.png) |
 
 ## Features
 
@@ -30,11 +47,9 @@
 
 - **💻 Responsive Design**: Automatically adapts to both desktop and most mobile browsers.
 
-- **📧 Email Sending**: Integrated with Resend for bulk email sending, embedded images, attachments, and status tracking.
+- **📧 Email Sending**: Integrated with Resend, supporting bulk email sending and attachments.
 
-- **🛡️ Admin Features**: Admins can manage users and emails, with RBAC permission control to limit access to features and resources.
-
-- **🔀 Multiple Accounts**: Users can add multiple email accounts. 
+- **🛡️ Admin Features**: Admin controls for user and email management with RBAC-based access control.
 
 - **📦 Attachment Support**: Send and receive attachments, stored and downloaded via R2 object storage.
 
@@ -42,62 +57,85 @@
 
 - **📡 Open API**: Supports batch user creation via API and multi-condition email queries
 
-- **📈 Data Visualization**: Use Echarts to visualize system data, including user email growth.
-
-- **⭐ Starred Emails**: Mark important emails for quick access.
+- **📈 Data Visualization**: Use ECharts to visualize system data, including user email growth.
 
 - **🎨 Personalization**: Customize website title, login background, and transparency.
-
-- **⚙️ Feature Settings**: Toggle on or off features like registration, email sending, and more, with the option to make the site private.
 
 - **🤖 CAPTCHA**: Integrated with Turnstile CAPTCHA to prevent automated registration.
 
 - **📜 More Features**: Under development...
 
-## GitHub OAuth Configuration
-
-To enable GitHub sign-in, configure the following Cloudflare Workers variables:
-
-1. Visit [GitHub Developer settings](https://github.com/settings/developers) and create a new **OAuth App**. Set the `Authorization callback URL` to `https://<your-domain>/oauth/github/callback` (replace with your domain).
-2. Copy the generated **Client ID** and **Client Secret**.
-3. Add these variables to the `[vars]` section of `wrangler.toml`, `wrangler-dev.toml`, or via the Cloudflare Dashboard:
-   - `githubClientId`
-   - `githubClientSecret`
-   - `githubRedirectUri` (must match the callback URL from step 1)
-4. Redeploy the Worker and the login page will show the GitHub button automatically.
-
 ## Tech Stack
 
-- **Framework**: [Vue3](https://vuejs.org/) + [Element Plus](https://element-plus.org/)
+- **Platform**: [Cloudflare Workers](https://developers.cloudflare.com/workers/)
 
 - **Web Framework**: [Hono](https://hono.dev/)
 
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 
-- **Platform**: [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+- **Frontend Framework**: [Vue3](https://vuejs.org/)
+
+- **UI Framework**: [Element Plus](https://element-plus.org/)
 
 - **Email Service**: [Resend](https://resend.com/)
 
-- **Caching**: [Cloudflare KV](https://developers.cloudflare.com/kv/)
+- **Cache**: [Cloudflare KV](https://developers.cloudflare.com/kv/)
 
 - **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/)
 
 - **File Storage**: [Cloudflare R2](https://developers.cloudflare.com/r2/)
 
+## Project Structure
+
+```
+cloud-mail
+├── mail-worker				    # Backend worker project
+│   ├── src                  
+│   │   ├── api	 			    # API layer
+│   │   ├── const  			    # Project constants
+│   │   ├── dao                 # Data access layer
+│   │   ├── email			    # Email processing and handling
+│   │   ├── entity			    # Database entities
+│   │   ├── error			    # Custom exceptions
+│   │   ├── hono			    # Web framework, middleware, error handling
+│   │   ├── i18n			    # Internationalization
+│   │   ├── init			    # Database and cache initialization
+│   │   ├── model			    # Response data models
+│   │   ├── security			# Authentication and authorization
+│   │   ├── service			    # Business logic layer
+│   │   ├── template			# Message templates
+│   │   ├── utils			    # Utility functions
+│   │   └── index.js			# Entry point
+│   ├── package.json			# Project dependencies
+│   └── wrangler.toml			# Project configuration
+│
+├─ mail-vue				        # Frontend Vue project
+│   ├── src
+│   │   ├── axios 			    # Axios configuration
+│   │   ├── components			# Custom components
+│   │   ├── echarts			    # ECharts integration
+│   │   ├── i18n			    # Internationalization
+│   │   ├── init			    # Startup initialization
+│   │   ├── layout			    # Main layout components
+│   │   ├── perm			    # Permissions and access control
+│   │   ├── request			    # API request layer
+│   │   ├── router			    # Router configuration
+│   │   ├── store			    # Global state management
+│   │   ├── utils			    # Utility functions
+│   │   ├── views			    # Page components
+│   │   ├── app.vue			    # Root component
+│   │   ├── main.js			    # Entry JS file
+│   │   └── style.css			# Global styles
+│   ├── package.json			# Project dependencies
+└── └── env.release				# Environment configuration
+
+```
 
 ## Support
 
-
 <a href="https://doc.skymail.ink/support.html">
 <img width="170px" src="./doc/images/support.png" alt="">
-</a><br><br>
-
-
-**Special Sponsors**
-
-[DartNode](https://dartnode.com)：Providing cloud computing service resource support.
-
-[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
+</a>
 
 ## License
 

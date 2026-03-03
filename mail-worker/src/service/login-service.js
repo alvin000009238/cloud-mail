@@ -22,12 +22,16 @@ import verifyRecordService from './verify-record-service';
 
 const loginService = {
 
-	async register(c, params) {
+	async register(c, params, oauth = false) {
 
 		const { email, password, token, code } = params;
 
-		const {regKey, register, registerVerify, regVerifyCount} = await settingService.query(c)
+		let { regKey, register, registerVerify, regVerifyCount, minEmailPrefix, emailPrefixFilter } = await settingService.query(c)
 
+		if (oauth) {
+			registerVerify = settingConst.registerVerify.CLOSE;
+			register = settingConst.register.OPEN;
+		}
 
 		if (register === settingConst.register.CLOSE) {
 			throw new BizError(t('regDisabled'));
@@ -37,16 +41,24 @@ const loginService = {
 			throw new BizError(t('notEmail'));
 		}
 
+		if (emailUtils.getName(email).length < minEmailPrefix) {
+			throw new BizError(t('minEmailPrefix', { msg: minEmailPrefix } ));
+		}
+
+		if (emailPrefixFilter.some(content => emailUtils.getName(email).includes(content)))  {
+			throw new BizError(t('banEmailPrefix'));
+		}
+
+		if (emailUtils.getName(email).length > 64) {
+			throw new BizError(t('emailLengthLimit'));
+		}
+
 		if (password.length > 30) {
 			throw new BizError(t('pwdLengthLimit'));
 		}
 
-		if (emailUtils.getName(email).length > 30) {
-			throw new BizError(t('emailLengthLimit'));
-		}
-
 		if (password.length < 6) {
-			throw new BizError(t('pwdMinLengthLimit'));
+			throw new BizError(t('pwdMinLength'));
 		}
 
 		if (!c.env.domain.includes(emailUtils.getDomain(email))) {
@@ -77,7 +89,6 @@ const loginService = {
 		if (accountRow) {
 			throw new BizError(t('isRegAccount'));
 		}
-
 
 		let defType = null
 
@@ -188,11 +199,11 @@ const loginService = {
 		return { type: regKeyRow.roleId, regKeyId: regKeyRow.regKeyId };
 	},
 
-	async login(c, params) {
+	async login(c, params, noVerifyPwd = false) {
 
 		const { email, password } = params;
 
-		if (!email || !password) {
+		if ((!email || !password) && !noVerifyPwd) {
 			throw new BizError(t('emailAndPwdEmpty'));
 		}
 
@@ -210,53 +221,48 @@ const loginService = {
 			throw new BizError(t('isBanUser'));
 		}
 
-		if (!await cryptoUtils.verifyPassword(password, userRow.salt, userRow.password)) {
+		if (!await cryptoUtils.verifyPassword(password, userRow.salt, userRow.password) && !noVerifyPwd) {
 			throw new BizError(t('IncorrectPwd'));
 		}
 
-                return await this.createSession(c, userRow);
-        },
+		const uuid = uuidv4();
+		const jwt = await JwtUtils.generateToken(c,{ userId: userRow.userId, token: uuid });
 
-        async logout(c, userId) {
-                const token =userContext.getToken(c);
-                const authInfo = await c.env.kv.get(KvConst.AUTH_INFO + userId, { type: 'json' });
-                const index = authInfo.tokens.findIndex(item => item === token);
-                authInfo.tokens.splice(index, 1);
-                await c.env.kv.put(KvConst.AUTH_INFO + userId, JSON.stringify(authInfo));
-        },
+		let authInfo = await c.env.kv.get(KvConst.AUTH_INFO + userRow.userId, { type: 'json' });
 
-        async createSession(c, userRow) {
+		if (authInfo && (authInfo.user.email === userRow.email)) {
 
-                const uuid = uuidv4();
-                const jwt = await JwtUtils.generateToken(c,{ userId: userRow.userId, token: uuid });
+			if (authInfo.tokens.length > 10) {
+				authInfo.tokens.shift();
+			}
 
-                let authInfo = await c.env.kv.get(KvConst.AUTH_INFO + userRow.userId, { type: 'json' });
+			authInfo.tokens.push(uuid);
 
-                if (authInfo) {
+		} else {
 
-                        if (authInfo.tokens.length > 10) {
-                                authInfo.tokens.shift();
-                        }
+			authInfo = {
+				tokens: [],
+				user: userRow,
+				refreshTime: dayjs().toISOString()
+			};
 
-                        authInfo.tokens.push(uuid);
+			authInfo.tokens.push(uuid);
 
-                } else {
+		}
 
-                        authInfo = {
-                                tokens: [],
-                                user: userRow,
-                                refreshTime: dayjs().toISOString()
-                        };
+		await userService.updateUserInfo(c, userRow.userId);
 
-                        authInfo.tokens.push(uuid);
+		await c.env.kv.put(KvConst.AUTH_INFO + userRow.userId, JSON.stringify(authInfo), { expirationTtl: constant.TOKEN_EXPIRE });
+		return jwt;
+	},
 
-                }
-
-                await userService.updateUserInfo(c, userRow.userId);
-
-                await c.env.kv.put(KvConst.AUTH_INFO + userRow.userId, JSON.stringify(authInfo), { expirationTtl: constant.TOKEN_EXPIRE });
-                return jwt;
-        }
+	async logout(c, userId) {
+		const token =userContext.getToken(c);
+		const authInfo = await c.env.kv.get(KvConst.AUTH_INFO + userId, { type: 'json' });
+		const index = authInfo.tokens.findIndex(item => item === token);
+		authInfo.tokens.splice(index, 1);
+		await c.env.kv.put(KvConst.AUTH_INFO + userId, JSON.stringify(authInfo));
+	}
 
 };
 

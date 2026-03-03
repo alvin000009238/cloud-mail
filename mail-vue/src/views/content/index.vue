@@ -7,7 +7,8 @@
         <Icon class="icon" @click="changeStar" v-if="email.isStar" icon="fluent-color:star-16" width="20" height="20"/>
         <Icon class="icon" @click="changeStar" v-else icon="solar:star-line-duotone" width="18" height="18"/>
       </span>
-      <Icon class="icon" v-if="emailStore.contentData.showReply" v-perm="'email:send'"  @click="openReply" icon="la:reply" width="20" height="20" />
+      <Icon class="icon" v-if="emailStore.contentData.showReply" v-perm="'email:send'"  @click="openReply" icon="la:reply" width="21" height="21" />
+      <Icon class="icon" v-if="emailStore.contentData.showReply" v-perm="'email:send'"  @click="openForward" icon="iconoir:arrow-up-right" width="20" height="20" />
     </div>
     <div></div>
     <el-scrollbar class="scrollbar">
@@ -29,7 +30,7 @@
                 <div>{{ formatDetailDate(email.createTime) }}</div>
               </div>
             </div>
-            <el-alert v-if="email.status === 3" :closable="false" :title="`${$t('bounced')} ` + toMessage(email.message)" class="email-msg" type="error" show-icon />
+            <el-alert v-if="email.status === 3" :closable="false" :title="toMessage(email.message)" class="email-msg" type="error" show-icon />
             <el-alert v-if="email.status === 4" :closable="false" :title="$t('complained')" class="email-msg" type="warning" show-icon />
             <el-alert v-if="email.status === 5" :closable="false" :title="$t('delayed')" class="email-msg" type="warning" show-icon />
           </div>
@@ -74,10 +75,10 @@
 </template>
 <script setup>
 import ShadowHtml from '@/components/shadow-html/index.vue'
-import {reactive, ref, watch} from "vue";
+import {reactive, ref, watch, onMounted, onUnmounted} from "vue";
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {emailDelete} from "@/request/email.js";
+import {emailDelete, emailRead} from "@/request/email.js";
 import {Icon} from "@iconify/vue";
 import {useEmailStore} from "@/store/email.js";
 import {useAccountStore} from "@/store/account.js";
@@ -90,6 +91,7 @@ import {useSettingStore} from "@/store/setting.js";
 import {allEmailDelete} from "@/request/all-email.js";
 import {useUiStore} from "@/store/ui.js";
 import {useI18n} from "vue-i18n";
+import {EmailUnreadEnum} from "@/enums/email-enum.js";
 
 const uiStore = useUiStore();
 const settingStore = useSettingStore();
@@ -105,8 +107,23 @@ watch(() => accountStore.currentAccountId, () => {
   handleBack()
 })
 
+onMounted(() => {
+  if (emailStore.contentData.showUnread && email.unread === EmailUnreadEnum.UNREAD) {
+    email.unread = EmailUnreadEnum.READ;
+    emailRead([email.emailId]);
+  }
+})
+
+onUnmounted(() => {
+  emailStore.contentData.showUnread = false;
+})
+
 function openReply() {
   uiStore.writerRef.openReply(email)
+}
+
+function openForward() {
+  uiStore.writerRef.openForward(email)
 }
 
 function toMessage(message) {

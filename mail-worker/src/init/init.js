@@ -1,9 +1,9 @@
 import settingService from '../service/setting-service';
 import emailUtils from '../utils/email-utils';
-import {emailConst} from "../const/entity-const";
+import { emailConst } from "../const/entity-const";
 import { t } from '../i18n/i18n'
 
-const init = {
+const dbInit = {
 	async init(c) {
 
 		const secret = c.req.param('secret');
@@ -12,26 +12,26 @@ const init = {
 			return c.text(t('JWTMismatch'));
 		}
 
-                await this.intDB(c);
-                await this.v1_1DB(c);
-                await this.v1_2DB(c);
-                await this.v1_3DB(c);
-                await this.v1_3_1DB(c);
-                await this.v1_4DB(c);
-                await this.v1_5DB(c);
-                await this.v1_6DB(c);
-                await this.v1_7DB(c);
-                await this.v2DB(c);
-                await this.v2_1DB(c);
+		await this.intDB(c);
+		await this.v1_1DB(c);
+		await this.v1_2DB(c);
+		await this.v1_3DB(c);
+		await this.v1_3_1DB(c);
+		await this.v1_4DB(c);
+		await this.v1_5DB(c);
+		await this.v1_6DB(c);
+		await this.v1_7DB(c);
+		await this.v2DB(c);
+		await this.v2_1DB(c);
 		await settingService.refresh(c);
 		return c.text(t('initSuccess'));
 	},
 
-        async v2DB(c) {
-                try {
-                        await c.env.db.batch([
-                                c.env.db.prepare(`ALTER TABLE setting ADD COLUMN bucket TEXT NOT NULL DEFAULT '';`),
-                                c.env.db.prepare(`ALTER TABLE setting ADD COLUMN region TEXT NOT NULL DEFAULT '';`),
+	async v2DB(c) {
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN bucket TEXT NOT NULL DEFAULT '';`),
+				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN region TEXT NOT NULL DEFAULT '';`),
 				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN endpoint TEXT NOT NULL DEFAULT '';`),
 				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN s3_access_key TEXT NOT NULL DEFAULT '';`),
 				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN s3_secret_key TEXT NOT NULL DEFAULT '';`),
@@ -39,13 +39,13 @@ const init = {
 			]);
 		} catch (e) {
 			console.error(e.message)
-                }
-        },
+		}
+	},
 
-        async v2_1DB(c) {
-                try {
-                        await c.env.db.batch([
-                                c.env.db.prepare(`CREATE TABLE IF NOT EXISTS user_oauth (
+	async v2_1DB(c) {
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`CREATE TABLE IF NOT EXISTS user_oauth (
                                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         user_id INTEGER NOT NULL,
                                         provider TEXT NOT NULL,
@@ -56,13 +56,13 @@ const init = {
                                         avatar TEXT NOT NULL DEFAULT '',
                                         create_time DATETIME DEFAULT CURRENT_TIMESTAMP
                                 );`),
-                                c.env.db.prepare(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_oauth_provider_external ON user_oauth(provider, external_id);`),
-                                c.env.db.prepare(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_oauth_user_provider ON user_oauth(user_id, provider);`)
-                        ]);
-                } catch (e) {
-                        console.error(e.message);
-                }
-        },
+				c.env.db.prepare(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_oauth_provider_external ON user_oauth(provider, external_id);`),
+				c.env.db.prepare(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_oauth_user_provider ON user_oauth(user_id, provider);`)
+			]);
+		} catch (e) {
+			console.error(e.message);
+		}
+	},
 
 	async v1_7DB(c) {
 		try {
@@ -237,7 +237,7 @@ const init = {
 
 	},
 
-	async v1_2DB(c){
+	async v1_2DB(c) {
 
 		const ADD_COLUMN_SQL_LIST = [
 			`ALTER TABLE email ADD COLUMN recipient TEXT NOT NULL DEFAULT '[]';`,
@@ -322,7 +322,7 @@ const init = {
       )
     `).run();
 
-		const {permTotal} = await c.env.db.prepare(`SELECT COUNT(*) as permTotal FROM perm`).first();
+		const { permTotal } = await c.env.db.prepare(`SELECT COUNT(*) as permTotal FROM perm`).first();
 
 		if (permTotal === 0) {
 			await c.env.db.prepare(`
@@ -398,7 +398,7 @@ const init = {
       )
     `).run();
 
-		const {rolePermCount} = await c.env.db.prepare(`SELECT COUNT(*) as rolePermCount FROM role_perm`).first();
+		const { rolePermCount } = await c.env.db.prepare(`SELECT COUNT(*) as rolePermCount FROM role_perm`).first();
 		if (rolePermCount === 0) {
 			await c.env.db.prepare(`
         INSERT INTO role_perm (id, role_id, perm_id) VALUES
@@ -516,13 +516,13 @@ const init = {
 		}
 
 		const queryList = []
-		const {results} = await c.env.db.prepare('SELECT receive_email,email_id FROM email').all();
+		const { results } = await c.env.db.prepare('SELECT receive_email,email_id FROM email').all();
 		results.forEach(emailRow => {
 			const recipient = {}
 			recipient.address = emailRow.receive_email
 			recipient.name = ''
 			const recipientStr = JSON.stringify([recipient]);
-			const sql = c.env.db.prepare('UPDATE email SET recipient = ? WHERE email_id = ?').bind(recipientStr,emailRow.email_id);
+			const sql = c.env.db.prepare('UPDATE email SET recipient = ? WHERE email_id = ?').bind(recipientStr, emailRow.email_id);
 			queryList.push(sql)
 		})
 
@@ -544,15 +544,15 @@ const init = {
 
 		queryList.push(c.env.db.prepare(`ALTER TABLE account ADD COLUMN name TEXT NOT NULL DEFAULT ''`));
 
-		const {results} = await c.env.db.prepare(`SELECT account_id, email FROM account`).all();
+		const { results } = await c.env.db.prepare(`SELECT account_id, email FROM account`).all();
 
 		results.forEach(accountRow => {
 			const name = emailUtils.getName(accountRow.email);
-			const sql = c.env.db.prepare('UPDATE account SET name = ? WHERE account_id = ?').bind(name,accountRow.account_id);
+			const sql = c.env.db.prepare('UPDATE account SET name = ? WHERE account_id = ?').bind(name, accountRow.account_id);
 			queryList.push(sql)
 		})
 
 		await c.env.db.batch(queryList);
 	}
 };
-export default init;
+export { dbInit };

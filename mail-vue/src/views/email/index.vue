@@ -142,8 +142,10 @@ function getEmailList(emailId, size) {
   const accountId =  accountStore.currentAccountId;
   const allReceive = accountStore.currentAccount.allReceive;
   return emailList(accountId, allReceive, emailId, params.timeSort, size, 0).then(data => {
-    data.latestEmail.reqAccountId = accountId;
-    data.latestEmail.allReceive = allReceive;
+    if (data.latestEmail) {
+      data.latestEmail.reqAccountId = accountId;
+      data.latestEmail.allReceive = allReceive;
+    }
     return data;
   })
 }

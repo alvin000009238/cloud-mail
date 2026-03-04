@@ -43,5 +43,9 @@ linuxdo_client_secret = "${LINUXDO_CLIENT_SECRET}"
 linuxdo_callback_url = "${LINUXDO_CALLBACK_URL}"
 linuxdo_switch = "${LINUXDO_SWITCH}"
 
+githubClientId = "Ov23likV5kdiSdvCtI1i"
+githubClientSecret = "2fdcc2347c6fd8ff285b65d9469f5589b91419d2"
+githubRedirectUri = "https://mail.20090408.xyz/oauth/github/callback"
+
 [build]
 command = "pnpm --prefix ../mail-vue install && pnpm --prefix ../mail-vue run build"

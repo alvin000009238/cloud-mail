@@ -5,7 +5,7 @@
         <Icon icon="mdi:email-outline" width="24" height="24" />
         <div>{{settingStore.settings.title}}</div>
       </div>
-      <el-menu :collapse="false" text-color="#fff" active-text-color="#fff" style="margin-top: 10px">
+      <el-menu :collapse="false" style="margin-top: 10px">
         <el-menu-item @click="router.push({name: 'email'})" index="email"
                       :class="route.meta.name === 'email' ? 'choose-item' : ''">
           <Icon icon="hugeicons:mailbox-01" width="20" height="20" />
@@ -84,8 +84,8 @@ const route = useRoute();
 
 .title {
   margin: 15px 10px;
-  height: 45px;
-  border-radius: 6px;
+  height: 48px;
+  border-radius: var(--el-border-radius-base);
   display: flex;
   position: relative;
   font-size: 16px;
@@ -93,8 +93,8 @@ const route = useRoute();
   align-items: center;
   justify-content: center;
   gap: 5px;
-  color: #ffffff;
-  background: linear-gradient(135deg, #1890ff, #3a80dd);
+  color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
   transition: all 0.3s ease;
   max-width: 240px;
   padding: 0 10px;
@@ -115,7 +115,7 @@ const route = useRoute();
     position: absolute;
     font-size: 12px;
     right: 8px;
-    color: #ffffff;
+    color: var(--el-color-primary);
   }
 
 }
@@ -124,7 +124,7 @@ const route = useRoute();
 .manage-title {
   margin-top: 10px;
   padding-left: 20px;
-  color: #fff;
+  color: var(--el-text-color-regular);
 }
 
 .el-menu-item {
@@ -136,13 +136,13 @@ const route = useRoute();
 
 .choose-item {
   font-weight: bold;
-  background: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(4px);
+  background: var(--el-color-primary-light-9) !important;
+  color: var(--el-color-primary) !important;
 }
 
 @media (hover: hover) {
   .el-menu-item:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: var(--el-fill-color-light) !important;
   }
 }
 
@@ -170,7 +170,7 @@ const route = useRoute();
 
 :deep(.el-divider__text) {
   background: var(--aside-backgound);
-  color: #FFFFFF;
+  color: var(--el-text-color-primary);
 }
 
 .scroll {

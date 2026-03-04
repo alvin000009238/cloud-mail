@@ -7,7 +7,8 @@
     scrollbar-color: var(--dark-border) transparent;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
 }
@@ -27,17 +28,19 @@ html, body {
 }
 
 body {
-    font-family: -apple-system, Inter, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: "Google Sans", Roboto, -apple-system, Inter, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     line-height: 1.5;
     color: var(--el-text-color-primary);
     font-size: 14px;
 }
 
-html, body {
+html,
+body {
     background: var(--el-bg-color);
 }
 
-ul, ol {
+ul,
+ol {
     list-style: none;
 }
 
@@ -47,7 +50,10 @@ img {
     display: block;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
     font-family: inherit;
     font-size: inherit;
     outline: none;
@@ -72,7 +78,8 @@ button, input, select, textarea {
     }
 }
 
-.el-input-group__append, .el-input-group__prepend {
+.el-input-group__append,
+.el-input-group__prepend {
     color: var(--el-text-color-primary) !important;
 }
 
@@ -82,6 +89,7 @@ button, input, select, textarea {
 
 .tox .tox-dialog--width-lg {
     height: 850px !important;
+
     @media (max-width: 1024px) {
         height: calc(100% - 40px) !important;
     }
@@ -90,6 +98,7 @@ button, input, select, textarea {
 .tox .tox-dialog__body-content {
     overflow: initial !important;
     max-height: min(850px, calc(100vh - 110px)) !important;
+
     @media (max-width: 1024px) {
         box-sizing: initial !important;
         max-height: min(850px, calc(100% - 40px)) !important;
@@ -106,34 +115,49 @@ button, input, select, textarea {
 }
 
 :root {
-    --el-color-primary: #1890ff;
-    --el-color-primary-dark-2: #1064c0;
-    --el-color-primary-light-3: #4dabff;
-    --el-color-primary-light-5: #69c0ff;
-    --el-color-primary-light-7: #91d5ff;
-    --el-color-primary-light-9: #e6f7ff;
+    --el-color-primary: #0b57d0;
+    --el-color-primary-dark-2: #0842a0;
+    --el-color-primary-light-3: #4285f4;
+    --el-color-primary-light-5: #7baaf7;
+    --el-color-primary-light-7: #aecbfa;
+    --el-color-primary-light-8: #d2e3fc;
+    --el-color-primary-light-9: #e8f0fe;
 
-    --extra-light-fill: #FAFCFF;
-    --light-ill: #F5F7FA;
-    --light-border: #E4E7ED;
+    --el-border-radius-base: 16px;
+    --el-border-radius-small: 8px;
+    --el-border-radius-round: 9999px;
+    --el-border-radius-circle: 50%;
+
+    --el-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --el-box-shadow-light: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+    --el-bg-color: #f8fafd;
+    --el-bg-color-page: #f4f7fc;
+    --el-bg-color-overlay: #ffffff;
+    --el-text-color-primary: #1f1f1f;
+    --el-border-color-lighter: #e0e2e6;
+
+    --extra-light-fill: #fdfcff;
+    --light-ill: #f4f7fc;
+    --light-border: #e1e3e8;
     --header-actions-border: inset 0 -1px 0 0 var(--el-border-color-lighter);
-    --aside-backgound: #001529;
+    --aside-backgound: transparent;
     --loadding-background: rgba(255, 255, 255, 0.8);
     --dark-border: #CDD0D6;
-    --base-fill: #F0F2F5;
-    --regular-text-color: #585d69;
-    --light-border-color: #e7e9ec;
-    --aside-right-border: 3px 0 5px rgba(0, 21, 41, .35);
-    --choose-account-background: var(--el-color-primary-light-8);
+    --base-fill: #f3f4f9;
+    --regular-text-color: #44474e;
+    --light-border-color: #e1e3e8;
+    --aside-right-border: none;
+    --choose-account-background: var(--el-color-primary-light-9);
     --el-text-color-regular: var(--el-text-color-primary);
-    --email-scroll-content-color: rgba(25, 41, 59, 0.4);
-    --email-hover-background: #F2F6FC;
+    --email-scroll-content-color: rgba(68, 71, 78, 0.6);
+    --email-hover-background: #edf1f7;
     --login-border: none;
-    --form-desc-color: #71717a;
-    --login-switch-color: #006be6;
-    --scrollbar-track-color: #A8ABB2;
-    --base-border-color: #DCDFE6;
-    --secondary-text-color: #909399;
+    --form-desc-color: #74777f;
+    --login-switch-color: #0b57d0;
+    --scrollbar-track-color: #c4c6d0;
+    --base-border-color: #c4c6d0;
+    --secondary-text-color: #74777f;
     --message-block-color: rgba(0, 0, 0, 0);
     --loading-hide-transition: all 200ms;
     --vt-x: 50%;
@@ -143,28 +167,35 @@ button, input, select, textarea {
 }
 
 .dark {
-    --extra-light-fill: #191919;
-    --light-ill: #262727;
-    --light-border: #414243;
-    --aside-backgound: #141414;
+    --el-color-primary: #a8c7fa;
+    --el-root-bg-color: #111114;
+    --el-bg-color: #111114;
+    --el-bg-color-page: #111114;
+    --el-bg-color-overlay: #1e1f22;
+    --el-text-color-primary: #e3e2e6;
+
+    --extra-light-fill: #1e1f22;
+    --light-ill: #1e1f22;
+    --light-border: #44474f;
+    --aside-backgound: transparent;
     --header-actions-border: inset 0 -1px 0 0 var(--el-border-color-lighter);
-    --loadding-background: rgba(0, 0, 0, 0.3);
-    --dark-border: #636466;
-    --base-fill: #303030;
-    --regular-text-color: #bfbdbc;
-    --light-border-color: #414243;
-    --aside-right-border: 3px 0 5px #0A0A0A;
-    --choose-account-background: #39393A;
-    --email-scroll-content-color: rgba(255, 255, 255, 0.3);
-    --email-hover-background: #1D1E1F;
+    --loadding-background: rgba(17, 17, 20, 0.8);
+    --dark-border: #44474f;
+    --base-fill: #1e1f22;
+    --regular-text-color: #c4c6d0;
+    --light-border-color: #44474f;
+    --aside-right-border: none;
+    --choose-account-background: #393b40;
+    --email-scroll-content-color: rgba(227, 226, 230, 0.6);
+    --email-hover-background: #2f3036;
     --login-border: none;
-    --form-desc-color: #8D9095;
-    --login-switch-color: rgb(102, 177, 255);
-    --scrollbar-track-color: #8D9095;
-    --base-border-color: #4C4D4F;
-    --secondary-text-color: #A3A6AD;
-    --message-block-color: rgba(30, 30, 30, 0.2);
-    --el-border-color: #414243 !important;
+    --form-desc-color: #8e9099;
+    --login-switch-color: #a8c7fa;
+    --scrollbar-track-color: #44474f;
+    --base-border-color: #44474f;
+    --secondary-text-color: #8e9099;
+    --message-block-color: rgba(40, 42, 47, 0.5);
+    --el-border-color: #44474f !important;
 }
 
 .el-input {
@@ -184,10 +215,21 @@ html:not(.dark) {
 }
 
 /* 层级控制，确保对应方向动画在上层可见 */
-html[data-theme-to="dark"]::view-transition-new(root) { z-index: 2; }
-html[data-theme-to="dark"]::view-transition-old(root) { z-index: 1; }
-html[data-theme-to="light"]::view-transition-old(root) { z-index: 2; }
-html[data-theme-to="light"]::view-transition-new(root) { z-index: 1; }
+html[data-theme-to="dark"]::view-transition-new(root) {
+    z-index: 2;
+}
+
+html[data-theme-to="dark"]::view-transition-old(root) {
+    z-index: 1;
+}
+
+html[data-theme-to="light"]::view-transition-old(root) {
+    z-index: 2;
+}
+
+html[data-theme-to="light"]::view-transition-new(root) {
+    z-index: 1;
+}
 
 /* 切到暗色：新视图从点击点向外扩散 */
 html[data-theme-to="dark"]::view-transition-new(root) {
@@ -202,11 +244,57 @@ html[data-theme-to="light"]::view-transition-old(root) {
 }
 
 @keyframes vt-radial-in {
-    from { clip-path: circle(0px at var(--vt-x) var(--vt-y)); }
-    to   { clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y)); }
+    from {
+        clip-path: circle(0px at var(--vt-x) var(--vt-y));
+    }
+
+    to {
+        clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y));
+    }
 }
 
 @keyframes vt-radial-out {
-    from { clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y)); }
-    to   { clip-path: circle(0px at var(--vt-x) var(--vt-y)); }
+    from {
+        clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y));
+    }
+
+    to {
+        clip-path: circle(0px at var(--vt-x) var(--vt-y));
+    }
+}
+
+/* Material Design 3 Overrides */
+.el-card {
+    border-radius: var(--el-border-radius-base) !important;
+    border: none !important;
+    box-shadow: var(--el-box-shadow) !important;
+    background-color: var(--el-bg-color-overlay) !important;
+}
+
+.el-button {
+    border-radius: var(--el-border-radius-round) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.1px;
+}
+
+.el-input__wrapper,
+.el-textarea__inner {
+    border-radius: var(--el-border-radius-base) !important;
+    box-shadow: 0 0 0 1px var(--base-border-color) inset !important;
+}
+
+.el-dialog {
+    border-radius: var(--el-border-radius-base) !important;
+}
+
+.el-menu {
+    border-right: none !important;
+    background: transparent !important;
+}
+
+.el-menu-item {
+    border-radius: 9999px !important;
+    margin: 4px 12px !important;
+    height: 48px !important;
+    line-height: 48px !important;
 }

@@ -376,12 +376,13 @@ function formatName(email) {
   margin-left: 5px;
 
   .writer {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1890ff, #3a80dd);
-    transition: all 0.3s ease;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--el-border-radius-circle);
+    color: var(--el-color-primary-light-9);
+    background: var(--el-color-primary);
+    box-shadow: var(--el-box-shadow-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -390,7 +391,10 @@ function formatName(email) {
       margin-left: 15px;
       font-size: 14px;
       font-weight: bold;;
-    }
+  }
+  .writer:hover {
+    box-shadow: var(--el-box-shadow);
+    transform: scale(1.05);
   }
 }
 

@@ -24,22 +24,23 @@ const userService = {
 
 		const userRow = await userService.selectById(c, userId);
 
-                const [account, roleRow, permKeys, oauthBindings] = await Promise.all([
-                        accountService.selectByEmailIncludeDel(c, userRow.email),
-                        roleService.selectById(c, userRow.type),
-                        userRow.email === c.env.admin ? Promise.resolve(['*']) : permService.userPermKeys(c, userId),
-                        userOAuthService.listByUserId(c, userRow.userId)
-                ]);
+		const [account, roleRow, permKeys, oauthBindings] = await Promise.all([
+			accountService.selectByEmailIncludeDel(c, userRow.email),
+			roleService.selectById(c, userRow.type),
+			userRow.email === c.env.admin ? Promise.resolve(['*']) : permService.userPermKeys(c, userId),
+			userOAuthService.listByUserId(c, userRow.userId)
+		]);
 
 		const user = {};
 		user.userId = userRow.userId;
 		user.sendCount = userRow.sendCount;
 		user.email = userRow.email;
-		user.accountId = account.accountId;
+		user.account = account;
 		user.name = account.name;
 		user.permKeys = permKeys;
-                user.role = roleRow
-                user.oauthBindings = oauthBindings;
+		user.role = roleRow;
+		user.type = userRow.type;
+		user.oauthBindings = oauthBindings;
 
 		if (c.env.admin === userRow.email) {
 			user.role = constant.ADMIN_ROLE
@@ -160,7 +161,7 @@ const userService = {
 			emailService.selectUserEmailCountList(c, userIds, emailConst.type.SEND, isDel.DELETE),
 			accountService.selectUserAccountCountList(c, userIds),
 			accountService.selectUserAccountCountList(c, userIds, isDel.DELETE),
-			roleService.selectByIdsHasPermKey(c, types,'email:send')
+			roleService.selectByIdsHasPermKey(c, types, 'email:send')
 		]);
 
 		const receiveMap = Object.fromEntries(emailCounts.map(item => [item.userId, item.count]));
@@ -213,7 +214,7 @@ const userService = {
 
 		const activeIp = reqUtils.getIp(c);
 
-		const {os, browser, device} = reqUtils.getUserAgent(c);
+		const { os, browser, device } = reqUtils.getUserAgent(c);
 
 		const params = {
 			os,
@@ -355,7 +356,7 @@ const userService = {
 
 	listByRegKeyId(c, regKeyId) {
 		return orm(c)
-			.select({email: user.email,createTime: user.createTime})
+			.select({ email: user.email, createTime: user.createTime })
 			.from(user)
 			.where(eq(user.regKeyId, regKeyId))
 			.orderBy(desc(user.userId))

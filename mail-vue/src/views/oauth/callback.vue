@@ -33,7 +33,7 @@ const getQueryParam = (value) => Array.isArray(value) ? value[0] : value
 const completeLogin = async (token) => {
   localStorage.setItem('token', token)
   const user = await loginUserInfo()
-  accountStore.currentAccountId = user.accountId
+  accountStore.currentAccountId = user.account.accountId
   userStore.user = user
   const routers = permsToRouter(user.permKeys)
   routers.forEach(routerData => {

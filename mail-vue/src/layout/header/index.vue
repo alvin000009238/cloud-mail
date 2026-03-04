@@ -390,11 +390,13 @@ function formatName(email) {
     .writer-text {
       margin-left: 15px;
       font-size: 14px;
-      font-weight: bold;;
-  }
-  .writer:hover {
-    box-shadow: var(--el-box-shadow);
-    transform: scale(1.05);
+      font-weight: bold;
+    }
+
+    &:hover {
+      box-shadow: var(--el-box-shadow);
+      transform: scale(1.05);
+    }
   }
 }
 

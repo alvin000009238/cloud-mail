@@ -23,6 +23,13 @@ const dbInit = {
 		await this.v1_7DB(c);
 		await this.v2DB(c);
 		await this.v2_1DB(c);
+		await this.v2_3DB(c);
+		await this.v2_4DB(c);
+		await this.v2_5DB(c);
+		await this.v2_6DB(c);
+		await this.v2_7DB(c);
+		await this.v2_8DB(c);
+		await this.v2_9DB(c);
 		await settingService.refresh(c);
 		return c.text(t('initSuccess'));
 	},
@@ -61,6 +68,106 @@ const dbInit = {
 			]);
 		} catch (e) {
 			console.error(e.message);
+		}
+	},
+
+	async v2_9DB(c) {
+		try {
+			await c.env.db.prepare(`UPDATE setting SET auto_refresh = 5 WHERE auto_refresh = 1;`).run();
+		} catch (e) {
+			console.warn(e.message);
+		}
+	},
+
+	async v2_8DB(c) {
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`ALTER TABLE account ADD COLUMN sort INTEGER NOT NULL DEFAULT 0;`)
+			]);
+		} catch (e) {
+			console.warn(e.message);
+		}
+	},
+
+	async v2_7DB(c) {
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`ALTER TABLE setting RENAME COLUMN auto_refresh_time TO auto_refresh;`)
+			]);
+		} catch (e) {
+			console.warn(e.message);
+		}
+	},
+
+	async v2_6DB(c) {
+		try {
+			await c.env.db.prepare(`ALTER TABLE account ADD COLUMN all_receive INTEGER NOT NULL DEFAULT 0;`).run();
+		} catch (e) {
+			console.warn(e.message);
+		}
+	},
+
+	async v2_5DB(c) {
+		try {
+			await c.env.db.prepare(`ALTER TABLE setting ADD COLUMN email_prefix_filter text NOT NULL DEFAULT '';`).run();
+		} catch (e) {
+			console.warn(e.message);
+		}
+
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`ALTER TABLE email ADD COLUMN unread INTEGER NOT NULL DEFAULT 0;`),
+				c.env.db.prepare(`UPDATE email SET unread = 1;`)
+			]);
+		} catch (e) {
+			console.warn(e.message);
+		}
+	},
+
+	async v2_4DB(c) {
+		try {
+			await c.env.db.prepare(`
+				CREATE TABLE IF NOT EXISTS oauth (
+					oauth_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					oauth_user_id TEXT,
+					username TEXT,
+					name TEXT,
+					avatar TEXT,
+					active INTEGER,
+					trust_level INTEGER,
+					silenced INTEGER,
+					create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+					platform INTEGER NOT NULL DEFAULT 0,
+					user_id INTEGER NOT NULL DEFAULT 0
+				)
+			`).run();
+		} catch (e) {
+			console.warn(e.message);
+		}
+
+		try {
+			await c.env.db.prepare(`ALTER TABLE setting ADD COLUMN min_email_prefix INTEGER NOT NULL DEFAULT 1;`).run();
+		} catch (e) {
+			console.warn(e.message);
+		}
+	},
+
+	async v2_3DB(c) {
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN force_path_style INTEGER NOT NULL DEFAULT 1;`),
+				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN custom_domain TEXT NOT NULL DEFAULT '';`),
+				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN tg_msg_to TEXT NOT NULL DEFAULT 'show';`),
+				c.env.db.prepare(`ALTER TABLE setting ADD COLUMN tg_msg_from TEXT NOT NULL DEFAULT 'only-name';`)
+			]);
+		} catch (e) {
+			console.warn(e.message);
+		}
+
+		try {
+			await c.env.db.prepare(`ALTER TABLE setting ADD COLUMN tg_msg_text TEXT NOT NULL DEFAULT 'show';`).run();
+		} catch (e) {
+			console.warn(e.message);
 		}
 	},
 

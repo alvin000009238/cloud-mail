@@ -30,8 +30,28 @@ const dbInit = {
 		await this.v2_7DB(c);
 		await this.v2_8DB(c);
 		await this.v2_9DB(c);
+		await this.v3DB(c);
 		await settingService.refresh(c);
 		return c.text(t('initSuccess'));
+	},
+
+	async v3DB(c) {
+		try {
+			await c.env.db.batch([
+				c.env.db.prepare(`CREATE TABLE IF NOT EXISTS user_passkey (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					user_id INTEGER NOT NULL,
+					credential_id TEXT NOT NULL,
+					public_key TEXT NOT NULL,
+					name TEXT NOT NULL DEFAULT 'Passkey',
+					sign_count INTEGER NOT NULL DEFAULT 0,
+					create_time DATETIME DEFAULT CURRENT_TIMESTAMP
+				);`),
+				c.env.db.prepare(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_passkey_cred_id ON user_passkey(credential_id);`)
+			]);
+		} catch (e) {
+			console.warn(e.message);
+		}
 	},
 
 	async v2DB(c) {
@@ -605,13 +625,17 @@ const dbInit = {
       )
     `).run();
 
-		await c.env.db.prepare(`
+		try {
+			await c.env.db.prepare(`
       INSERT INTO setting (
         register, receive, add_email, many_email, title, auto_refresh_time, register_verify, add_email_verify
       )
       SELECT 0, 0, 0, 1, 'Cloud Mail', 0, 1, 1
       WHERE NOT EXISTS (SELECT 1 FROM setting)
     `).run();
+		} catch (e) {
+			console.warn(e.message);
+		}
 	},
 
 	async receiveEmailToRecipient(c) {

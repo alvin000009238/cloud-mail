@@ -3,7 +3,8 @@ const KvConst = {
         SETTING: 'setting:',
         SEND_DAY_COUNT: 'send_day_count:',
         PUBLIC_KEY: 'public_key:',
-        OAUTH_STATE: 'oauth-state:'
+        OAUTH_STATE: 'oauth-state:',
+        PASSKEY_CHALLENGE: 'passkey-challenge:'
 }
 
 export default KvConst;

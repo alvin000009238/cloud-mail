@@ -45,6 +45,19 @@
           </template>
         </div>
       </div>
+      <div class="item" v-if="passkeySupported">
+        <div>Passkey</div>
+        <div class="passkey-manage">
+          <div v-for="pk in passkeyListData" :key="pk.id" class="passkey-item">
+            <div class="passkey-info">
+              <Icon icon="mdi:key-variant" width="16" height="16" />
+              <span class="passkey-name">{{ pk.name }}</span>
+            </div>
+            <el-button size="small" @click="deletePasskey(pk)" :loading="deletingPasskeyId === pk.id">{{$t('delete')}}</el-button>
+          </div>
+          <el-button size="small" type="primary" :loading="registerPasskeyLoading" @click="registerPasskey">{{$t('passkeyAdd')}}</el-button>
+        </div>
+      </div>
     </div>
     <div class="del-email" v-perm="'my:delete'">
       <div class="title">{{$t('deleteUser')}}</div>
@@ -67,11 +80,13 @@
 <script setup>
 import {reactive, ref, defineOptions, computed} from 'vue'
 import {resetPassword, userDelete, myOAuthAuthorize, myOAuthUnbind} from "@/request/my.js";
+import {passkeyRegisterOptions, passkeyRegisterVerify, passkeyList, passkeyDelete} from "@/request/passkey.js";
 import {useUserStore} from "@/store/user.js";
 import router from "@/router/index.js";
 import {accountSetName} from "@/request/account.js";
 import {useAccountStore} from "@/store/account.js";
 import {useI18n} from "vue-i18n";
+import {Icon} from "@iconify/vue";
 
 const { t } = useI18n()
 const accountStore = useAccountStore()
@@ -81,6 +96,10 @@ const setNameShow = ref(false)
 const accountName = ref(null)
 const bindLoading = ref(false)
 const unbindLoading = ref(false)
+const passkeySupported = ref(!!window.PublicKeyCredential)
+const passkeyListData = ref([])
+const registerPasskeyLoading = ref(false)
+const deletingPasskeyId = ref(null)
 
 const githubBinding = computed(() => {
   const bindings = userStore.user?.oauthBindings || []
@@ -166,6 +185,68 @@ async function unbindGitHub() {
     })
   } finally {
     unbindLoading.value = false
+  }
+}
+
+if (passkeySupported.value) {
+  passkeyList().then(list => {
+    passkeyListData.value = list || []
+  }).catch(() => {})
+}
+
+async function registerPasskey() {
+  if (registerPasskeyLoading.value) return
+  registerPasskeyLoading.value = true
+  try {
+    const options = await passkeyRegisterOptions()
+    const publicKeyOptions = {
+      rp: options.rp,
+      user: {
+        id: Uint8Array.from(atob(options.user.id.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)),
+        name: options.user.name,
+        displayName: options.user.displayName
+      },
+      challenge: Uint8Array.from(atob(options.challenge.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)),
+      pubKeyCredParams: options.pubKeyCredParams,
+      timeout: options.timeout,
+      authenticatorSelection: options.authenticatorSelection,
+      attestation: options.attestation,
+      excludeCredentials: (options.excludeCredentials || []).map(cred => ({
+        type: cred.type,
+        id: Uint8Array.from(atob(cred.id.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))
+      }))
+    }
+    const credential = await navigator.credentials.create({ publicKey: publicKeyOptions })
+    const toB64url = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+    const credentialData = {
+      id: credential.id,
+      type: credential.type,
+      response: {
+        clientDataJSON: toB64url(credential.response.clientDataJSON),
+        attestationObject: toB64url(credential.response.attestationObject)
+      }
+    }
+    const result = await passkeyRegisterVerify(credentialData, 'Passkey')
+    passkeyListData.value.push(result)
+    ElMessage({ message: t('passkeyRegisterSuccess'), type: 'success', plain: true })
+  } catch (e) {
+    if (e?.name !== 'NotAllowedError') {
+      ElMessage({ message: e?.message || t('passkeyRegisterFailed'), type: 'error', plain: true })
+    }
+  } finally {
+    registerPasskeyLoading.value = false
+  }
+}
+
+async function deletePasskey(pk) {
+  if (deletingPasskeyId.value) return
+  deletingPasskeyId.value = pk.id
+  try {
+    await passkeyDelete(pk.id)
+    passkeyListData.value = passkeyListData.value.filter(item => item.id !== pk.id)
+    ElMessage({ message: t('delSuccessMsg'), type: 'success', plain: true })
+  } finally {
+    deletingPasskeyId.value = null
   }
 }
 
@@ -320,6 +401,29 @@ function submitPwd() {
 
       @media (max-width: 767px) {
         gap: 70px;
+      }
+
+      .passkey-manage {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .passkey-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .passkey-info {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .passkey-name {
+          font-weight: 500;
+        }
       }
 
       div:first-child {

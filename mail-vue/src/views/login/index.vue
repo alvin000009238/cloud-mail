@@ -61,6 +61,21 @@
               <span>{{ provider.name }}</span>
             </el-button>
           </div>
+          <div v-if="passkeySupported" class="passkey-container">
+            <div v-if="!oauthProviders.length" class="oauth-divider">
+              <span>{{ $t('orUsePasskey') }}</span>
+            </div>
+            <el-button
+                class="passkey-btn"
+                type="default"
+                :loading="passkeyLoading"
+                :disabled="oauthProcessing"
+                @click="passkeyLogin"
+            >
+              <Icon icon="mdi:key-variant" width="20" height="20" class="oauth-icon"/>
+              <span>{{ $t('passkeyLoginBtn') }}</span>
+            </el-button>
+          </div>
           <el-alert
               v-if="oauthProcessing"
               class="oauth-alert"
@@ -131,6 +146,7 @@
 import router from "@/router";
 import {computed, nextTick, reactive, ref, onMounted, watch} from "vue";
 import {login, register, oauthAuthorize} from "@/request/login.js";
+import {passkeyLoginOptions, passkeyLoginVerify} from "@/request/passkey.js";
 import {isEmail} from "@/utils/verify-utils.js";
 import {useSettingStore} from "@/store/setting.js";
 import {useAccountStore} from "@/store/account.js";
@@ -176,6 +192,12 @@ const oauthProviders = computed(() => settingStore.settings.oauthProviders || []
 const oauthLoadingProvider = ref('')
 const oauthProcessing = ref(false)
 let processedOAuthState = null
+const passkeySupported = ref(false)
+const passkeyLoading = ref(false)
+
+if (window.PublicKeyCredential) {
+  passkeySupported.value = true
+}
 
 const providerIcon = (provider) => {
   if (provider === 'github') {
@@ -240,6 +262,40 @@ const handleOAuthCallback = () => {
 onMounted(() => {
   handleOAuthCallback()
 })
+
+const passkeyLogin = async () => {
+  if (passkeyLoading.value || oauthProcessing.value) return
+  passkeyLoading.value = true
+  try {
+    const options = await passkeyLoginOptions()
+    const publicKeyOptions = {
+      challenge: Uint8Array.from(atob(options.challenge.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)),
+      timeout: options.timeout,
+      rpId: options.rpId,
+      userVerification: options.userVerification,
+      allowCredentials: options.allowCredentials || []
+    }
+    const credential = await navigator.credentials.get({ publicKey: publicKeyOptions })
+    const credentialData = {
+      id: credential.id,
+      type: credential.type,
+      response: {
+        clientDataJSON: btoa(String.fromCharCode(...new Uint8Array(credential.response.clientDataJSON))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ''),
+        authenticatorData: btoa(String.fromCharCode(...new Uint8Array(credential.response.authenticatorData))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ''),
+        signature: btoa(String.fromCharCode(...new Uint8Array(credential.response.signature))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ''),
+        userHandle: credential.response.userHandle ? btoa(String.fromCharCode(...new Uint8Array(credential.response.userHandle))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '') : null
+      }
+    }
+    const data = await passkeyLoginVerify(credentialData)
+    await completeLogin(data.token)
+  } catch (e) {
+    if (e?.name !== 'NotAllowedError') {
+      ElMessage({ message: e?.message || t('passkeyLoginFailed'), type: 'error', plain: true })
+    }
+  } finally {
+    passkeyLoading.value = false
+  }
+}
 
 watch(oauthProviders, (providers) => {
   if (providers.length) {
@@ -602,6 +658,18 @@ function submitRegister() {
 
   .oauth-alert {
     margin-top: 12px;
+  }
+
+  .passkey-container {
+    margin-top: 16px;
+  }
+
+  .passkey-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
   :deep(.el-input__wrapper) {

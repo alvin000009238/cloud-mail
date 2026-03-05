@@ -334,6 +334,12 @@ const zh = {
     searchSender: '搜尋寄件人',
     confirmDeletionOfContacts: '確認清除這些聯絡人嗎？',
     recentContacts: '最近聯絡人',
-    selectContacts: '選取'
+    selectContacts: '選取',
+    passkeyLoginBtn: '使用 Passkey 登入',
+    passkeyLoginFailed: 'Passkey 登入失敗',
+    passkeyAdd: '新增 Passkey',
+    passkeyRegisterSuccess: 'Passkey 註冊成功',
+    passkeyRegisterFailed: 'Passkey 註冊失敗',
+    orUsePasskey: '或使用 Passkey'
 }
 export default zh

@@ -324,7 +324,13 @@ const en = {
     searchUser: 'Search by user',
     searchEmail: 'Search by Email',
     searchSender: 'Search by Sender',
-    userEmail: 'Email Address'
+    userEmail: 'Email Address',
+    passkeyLoginBtn: 'Sign in with Passkey',
+    passkeyLoginFailed: 'Passkey sign in failed',
+    passkeyAdd: 'Add Passkey',
+    passkeyRegisterSuccess: 'Passkey registered successfully',
+    passkeyRegisterFailed: 'Passkey registration failed',
+    orUsePasskey: 'Or use Passkey'
 }
 
 export default en

@@ -1,14 +1,27 @@
 <template>
   <div class="box">
     <div class="header-actions">
-      <Icon class="icon" icon="material-symbols-light:arrow-back-ios-new" width="20" height="20" @click="handleBack"/>
-      <Icon v-perm="'email:delete'" class="icon" icon="uiw:delete" width="16" height="16" @click="handleDelete"/>
-      <span class="star" v-if="emailStore.contentData.showStar">
-        <Icon class="icon" @click="changeStar" v-if="email.isStar" icon="fluent-color:star-16" width="20" height="20"/>
-        <Icon class="icon" @click="changeStar" v-else icon="solar:star-line-duotone" width="18" height="18"/>
-      </span>
-      <Icon class="icon" v-if="emailStore.contentData.showReply" v-perm="'email:send'"  @click="openReply" icon="la:reply" width="21" height="21" />
-      <Icon class="icon" v-if="emailStore.contentData.showReply" v-perm="'email:send'"  @click="openForward" icon="iconoir:arrow-up-right" width="20" height="20" />
+      <div class="back-btn" @click="handleBack">
+        <Icon icon="material-symbols:arrow-back-rounded" width="20" height="20"/>
+      </div>
+      <div class="action-pills">
+        <div class="pill pill-tonal" v-perm="'email:delete'" @click="handleDelete">
+          <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18"/>
+          <span>{{ $t('delete') }}</span>
+        </div>
+        <div v-if="emailStore.contentData.showStar" class="pill" :class="email.isStar ? 'pill-filled' : 'pill-outlined'" @click="changeStar">
+          <Icon :icon="email.isStar ? 'material-symbols:star-rounded' : 'material-symbols:star-outline-rounded'" width="18" height="18"/>
+          <span>{{ email.isStar ? $t('starred') : $t('star') }}</span>
+        </div>
+        <div class="pill pill-tonal" v-if="emailStore.contentData.showReply" v-perm="'email:send'" @click="openReply">
+          <Icon icon="material-symbols:reply-rounded" width="18" height="18"/>
+          <span>{{ $t('reply') }}</span>
+        </div>
+        <div class="pill pill-tonal" v-if="emailStore.contentData.showReply" v-perm="'email:send'" @click="openForward">
+          <Icon icon="material-symbols:forward-rounded" width="18" height="18"/>
+          <span>{{ $t('forward') }}</span>
+        </div>
+      </div>
     </div>
     <div></div>
     <el-scrollbar class="scrollbar">
@@ -221,31 +234,85 @@ const handleDelete = () => {
 }
 
 .header-actions {
-  padding: 8px 16px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: var(--header-actions-border);
-  font-size: 18px;
-  .star {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 21px;
-  }
-  .icon {
-    cursor: pointer;
+
+  .back-btn {
     width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--md-sys-shape-corner-full);
-    color: var(--md-sys-color-on-surface-variant);
+    cursor: pointer;
+    color: var(--md-sys-color-on-surface);
     transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+    flex-shrink: 0;
+
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+    }
+  }
+
+  .action-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px 0 12px;
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: pointer;
+    font: var(--md-sys-typescale-label-large);
+    white-space: nowrap;
+    transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    user-select: none;
+  }
+
+  .pill-tonal {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-1);
+      background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+  }
+
+  .pill-outlined {
+    background: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    border: 1px solid var(--md-sys-color-outline);
 
     &:hover {
       background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+    }
+  }
+
+  .pill-filled {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-1);
+      opacity: 0.92;
+    }
+
+    &:active {
+      box-shadow: none;
     }
   }
 }

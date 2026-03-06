@@ -110,10 +110,10 @@ const handleResize = () => {
     border: 0;
     height: 100%;
     width: 100%;
-    background: #000000;
-    opacity: 0.6;
+    background: var(--md-sys-color-scrim);
+    opacity: 0.32;
     z-index: 10;
-    transition: all 300ms;
+    transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   }
 }
 
@@ -161,7 +161,7 @@ const handleResize = () => {
 
 
 .main-view {
-  background: var(--el-bg-color);
+  background: var(--md-sys-color-surface);
 }
 
 

@@ -890,7 +890,7 @@ function loadData() {
   grid-template-rows: auto 1fr;
   padding: 0;
   font-size: 14px;
-  color: var(--el-text-color-primary);
+  color: var(--md-sys-color-on-surface);
   overflow: hidden;
   height: 100%;
 }
@@ -960,7 +960,7 @@ function loadData() {
   cursor: pointer;
   align-items: center;
   position: relative;
-  transition: background 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
   height: 48px;
   @media (max-width: 1366px) {
     height: 83px;
@@ -1052,7 +1052,7 @@ function loadData() {
     }
 
     .email-sender {
-      color: var(--el-text-color-primary);
+      color: var(--md-sys-color-on-surface);
       display: grid;
       grid-template-columns: auto 1fr auto;
 
@@ -1181,7 +1181,7 @@ function loadData() {
   }
 
   &:hover {
-    background-color: var(--email-hover-background);
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
     z-index: 0;
   }
 
@@ -1239,7 +1239,7 @@ function loadData() {
     column-gap: 20px;
     row-gap: 8px;
     padding-left: 2px;
-    color: var(--el-text-color-primary);;
+    color: var(--md-sys-color-on-surface);;
   }
 
   .header-right {
@@ -1247,7 +1247,7 @@ function loadData() {
     grid-template-columns: auto auto;
     align-items: start;
     height: 100%;
-    color: var(--el-text-color-primary);;
+    color: var(--md-sys-color-on-surface);;
 
     .email-count {
       white-space: nowrap;

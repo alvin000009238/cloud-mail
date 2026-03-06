@@ -628,13 +628,13 @@ function close() {
   justify-content: center;
 
   .write-box {
-    background: var(--el-bg-color);
+    background: var(--md-sys-color-surface-container-low);
     width: min(1367px, calc(100% - 80px));
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-light);
+    box-shadow: var(--md-sys-elevation-3);
+    border: 1px solid var(--md-sys-color-outline-variant);
     transition: var(--el-transition-duration);
-    padding: 15px;
-    border-radius: 8px;
+    padding: 20px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
     display: grid;
     grid-template-rows: auto 1fr;
     overflow: hidden;
@@ -643,7 +643,8 @@ function close() {
       height: 100%;
       border-radius: 0;
       border: 0;
-      padding-top: 10px;
+      padding-top: 16px;
+      background: var(--md-sys-color-surface);
     }
 
     @media (min-width: 1025px) {
@@ -725,12 +726,12 @@ function close() {
           .att-item {
             display: grid;
             grid-template-columns: auto 1fr auto auto;
-            gap: 5px;
-            height: 32px;
+            gap: 8px;
+            height: 36px;
             font-size: 14px;
-            padding: 4px 5px;
-            background: var(--light-ill);
-            border-radius: 4px;
+            padding: 6px 8px;
+            background: var(--md-sys-color-surface-container);
+            border-radius: var(--md-sys-shape-corner-small);
             .att-filename {
               white-space: nowrap;
               text-overflow: ellipsis;

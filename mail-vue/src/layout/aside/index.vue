@@ -83,26 +83,26 @@ const route = useRoute();
 <style lang="scss" scoped>
 
 .title {
-  margin: 15px 10px;
-  height: 48px;
-  border-radius: var(--el-border-radius-base);
+  margin: 16px 12px;
+  height: 56px;
+  border-radius: var(--md-sys-shape-corner-large);
   display: flex;
   position: relative;
-  font-size: 16px;
-  font-weight: bold;
+  font: var(--md-sys-typescale-title-medium);
+  font-weight: 600;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  color: var(--el-color-primary);
-  background: var(--el-color-primary-light-9);
-  transition: all 0.3s ease;
+  gap: 8px;
+  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary-container);
+  transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   max-width: 240px;
-  padding: 0 10px;
+  padding: 0 16px;
   > div {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: calc(240px - 20px - 30px);
+    max-width: calc(240px - 32px - 30px);
   }
 
   :deep(.el-icon) {
@@ -115,34 +115,40 @@ const route = useRoute();
     position: absolute;
     font-size: 12px;
     right: 8px;
-    color: var(--el-color-primary);
+    color: var(--md-sys-color-on-primary-container);
   }
 
 }
 
 
 .manage-title {
-  margin-top: 10px;
-  padding-left: 20px;
-  color: var(--el-text-color-regular);
+  margin-top: 16px;
+  margin-bottom: 4px;
+  padding-left: 24px;
+  font: var(--md-sys-typescale-title-small);
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .el-menu-item {
-  margin: 5px 10px !important;
-  border-radius: 6px;
-  height: 36px;
-  padding: 10px !important;
+  margin: 2px 12px !important;
+  border-radius: var(--md-sys-shape-corner-full) !important;
+  height: 56px !important;
+  padding: 0 24px 0 16px !important;
+  font: var(--md-sys-typescale-label-large);
+  color: var(--md-sys-color-on-surface-variant) !important;
+  transition: background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  gap: 12px;
 }
 
 .choose-item {
-  font-weight: bold;
-  background: var(--el-color-primary-light-9) !important;
-  color: var(--el-color-primary) !important;
+  font-weight: 700 !important;
+  background: var(--md-sys-color-secondary-container) !important;
+  color: var(--md-sys-color-on-secondary-container) !important;
 }
 
 @media (hover: hover) {
   .el-menu-item:hover {
-    background: var(--el-fill-color-light) !important;
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent) !important;
   }
 }
 
@@ -170,7 +176,7 @@ const route = useRoute();
 
 :deep(.el-divider__text) {
   background: var(--aside-backgound);
-  color: var(--el-text-color-primary);
+  color: var(--md-sys-color-on-surface);
 }
 
 .scroll {

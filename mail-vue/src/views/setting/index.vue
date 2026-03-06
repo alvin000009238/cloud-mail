@@ -337,8 +337,9 @@ function submitPwd() {
   }
 
   .title {
-    font-size: 18px;
-    font-weight: bold;
+    font: var(--md-sys-typescale-title-large);
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
   }
 
   .container {
@@ -371,9 +372,10 @@ function submitPwd() {
       }
 
       .edit-name {
-        color: #4dabff;
+        color: var(--md-sys-color-primary);
         padding-left: 10px;
         cursor: pointer;
+        font-weight: 500;
       }
 
       .oauth-bind {
@@ -442,7 +444,15 @@ function submitPwd() {
     font-size: 14px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    padding: 24px;
+    border-radius: var(--md-sys-shape-corner-large);
+
+    .title {
+      color: var(--md-sys-color-on-error-container);
+    }
   }
 }
 </style>

@@ -263,22 +263,23 @@ function formatName(email) {
 <style lang="scss" scoped>
 
 :deep(.el-popper.is-pure) {
-  border-radius: 6px;
+  border-radius: var(--md-sys-shape-corner-medium);
 }
 
 .user-details {
-  width: 250px;
+  width: 280px;
   font-size: 14px;
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
 
   .user-name {
-    font-weight: bold;
-    margin-top: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    width: 250px;
+    font: var(--md-sys-typescale-title-medium);
+    font-weight: 600;
+    margin-top: 12px;
+    padding-left: 24px;
+    padding-right: 24px;
+    width: 280px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -286,14 +287,16 @@ function formatName(email) {
   }
 
   .detail-user-type {
-    margin-top: 10px;
+    margin-top: 12px;
   }
 
   .action-info {
     width: 100%;
     display: grid;
     grid-template-columns: auto auto;
-    margin-top: 10px;
+    margin-top: 12px;
+    padding: 0 16px;
+    font: var(--md-sys-typescale-body-small);
 
     > div:first-child {
       display: grid;
@@ -314,54 +317,65 @@ function formatName(email) {
   }
 
   .detail-email {
-    padding-left: 20px;
-    padding-right: 20px;
-    width: 250px;
+    padding-left: 24px;
+    padding-right: 24px;
+    width: 280px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     text-align: center;
-    color: var(--regular-text-color);
+    color: var(--md-sys-color-on-surface-variant);
     cursor: pointer;
+    font: var(--md-sys-typescale-body-small);
+    margin-top: 4px;
+    border-radius: var(--md-sys-shape-corner-small);
+    padding-top: 4px;
+    padding-bottom: 4px;
+    transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+    }
   }
 
   .logout {
     margin-top: 20px;
     width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
+    padding: 0 16px 16px 16px;
 
     .el-button {
-      border-radius: 6px;
-      height: 28px;
+      border-radius: var(--md-sys-shape-corner-full);
+      height: 40px;
       width: 100%;
+      font: var(--md-sys-typescale-label-large);
     }
   }
 
   .details-avatar {
-    margin-top: 20px;
-    height: 40px;
-    width: 40px;
-    background: var(--el-bg-color);
-    color: var(--el-text-color-primary);
-    border: 1px solid var(--dark-border);
-    font-size: 18px;
+    margin-top: 24px;
+    height: 48px;
+    width: 48px;
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border: none;
+    font-size: 20px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: var(--md-sys-shape-corner-full);
   }
 }
 
 
 .header {
   text-align: right;
-  font-size: 12px;
+  font-size: 14px;
   display: grid;
   height: 100%;
-  gap: 10px;
+  gap: 12px;
   grid-template-columns: auto auto 1fr;
+  padding: 0 8px;
 }
 
 .header.not-send {
@@ -373,29 +387,32 @@ function formatName(email) {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 5px;
+  margin-left: 8px;
 
   .writer {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--el-border-radius-circle);
-    color: var(--el-color-primary-light-9);
-    background: var(--el-color-primary);
-    box-shadow: var(--el-box-shadow-light);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 56px;
+    height: 56px;
+    border-radius: var(--md-sys-shape-corner-large);
+    color: var(--md-sys-color-on-primary-container);
+    background: var(--md-sys-color-primary-container);
+    box-shadow: var(--md-sys-elevation-3);
+    transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
     display: flex;
     align-items: center;
     justify-content: center;
 
     .writer-text {
       margin-left: 15px;
-      font-size: 14px;
-      font-weight: bold;
+      font: var(--md-sys-typescale-label-large);
     }
 
     &:hover {
-      box-shadow: var(--el-box-shadow);
-      transform: scale(1.05);
+      box-shadow: var(--md-sys-elevation-4);
+      background: color-mix(in srgb, var(--md-sys-color-on-primary-container) 8%, var(--md-sys-color-primary-container));
+    }
+
+    &:active {
+      box-shadow: var(--md-sys-elevation-3);
     }
   }
 }
@@ -408,9 +425,9 @@ function formatName(email) {
 }
 
 .breadcrumb-item {
-  font-weight: bold;
-  font-size: 14px;
-  color: var(--el-text-color-primary);
+  font: var(--md-sys-typescale-title-medium);
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -419,29 +436,36 @@ function formatName(email) {
 .toolbar {
   display: flex;
   justify-content: end;
-  gap: 15px;
+  gap: 4px;
+  align-items: center;
+  padding-right: 4px;
   @media (max-width: 767px) {
-    gap: 10px;
+    gap: 0;
   }
 
   .icon-item {
     align-self: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-full);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    color: var(--md-sys-color-on-surface-variant);
+    transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
   }
 
   .icon-item:hover {
-    background: var(--base-fill);
+    background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+  }
+
+  .icon-item:active {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 12%, transparent);
   }
 
   .notice {
     font-size: 22px;
-    margin-right: 4px;
   }
 
   .dark-icon {
@@ -456,24 +480,34 @@ function formatName(email) {
     display: flex;
     align-items: center;
     cursor: pointer;
+    gap: 2px;
+    padding: 4px;
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+    }
 
     .avatar-text {
-      background: var(--el-bg-color);
-      color: var(--el-text-color-primary);
-      height: 30px;
-      width: 30px;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      height: 32px;
+      width: 32px;
       display: flex;
       justify-content: center;
       align-items: center;
-      border-radius: 8px;
-      border: 1px solid var(--dark-border);
+      border-radius: var(--md-sys-shape-corner-full);
+      border: none;
+      font-weight: 500;
     }
 
     .setting-icon {
       position: relative;
       top: 0;
-      margin-right: 10px;
+      margin-right: 4px;
       bottom: 10px;
+      color: var(--md-sys-color-on-surface-variant);
     }
   }
 

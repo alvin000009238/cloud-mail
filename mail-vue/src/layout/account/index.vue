@@ -511,33 +511,42 @@ path[fill="#ffdda1"] {
 <style scoped lang="scss">
 .account-box {
 
-  border-right: 1px solid var(--el-border-color) !important;
-  background-color: var(--el-bg-color);
+  border-right: 1px solid var(--md-sys-color-outline-variant) !important;
+  background-color: var(--md-sys-color-surface);
   height: 100%;
   overflow: hidden;
 
   .head-opt {
     display: flex;
     align-items: center;
-    height: 38px;
+    height: 48px;
     box-shadow: var(--header-actions-border);
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 8px;
 
     .icon {
       cursor: pointer;
+      color: var(--md-sys-color-on-surface-variant);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--md-sys-shape-corner-full);
+      transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+
+      &:hover {
+        background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+      }
     }
 
     .refresh {
-      margin-left: 10px;
+      margin-left: 0;
     }
 
     .add {
-      margin-left: 2px;
-    }
-
-    .head-opt:not(.add) .refresh {
-      margin-left: 5px;
+      margin-left: 0;
     }
   }
 
@@ -571,32 +580,41 @@ path[fill="#ffdda1"] {
   }
 
   .item {
-    background-color: var(--el-bg-color);
-    border-radius: 8px;
-    padding: 12px 10px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    background-color: var(--md-sys-color-surface-container-low);
+    border-radius: var(--md-sys-shape-corner-medium) !important;
+    padding: 14px 12px;
+    margin-bottom: 8px;
+    margin-left: 12px;
+    margin-right: 12px;
     cursor: pointer;
+    transition: background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    box-shadow: none !important;
+    border: none !important;
+
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, var(--md-sys-color-surface-container-low));
+    }
 
     .account {
-      font-weight: 600;
-      margin-bottom: 20px;
+      font-weight: 500;
+      margin-bottom: 16px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      font: var(--md-sys-typescale-body-medium);
+      font-weight: 500;
     }
 
     .opt {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
-      color: #888;
+      color: var(--md-sys-color-on-surface-variant);
 
       .settings {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
       }
 
       .send-email {
@@ -611,11 +629,12 @@ path[fill="#ffdda1"] {
   }
 
   .item:first-child {
-    margin-top: 10px;
+    margin-top: 12px;
   }
 
   .item-choose {
-    background: var(--choose-account-background);
+    background: var(--md-sys-color-secondary-container) !important;
+    color: var(--md-sys-color-on-secondary-container);
   }
 }
 

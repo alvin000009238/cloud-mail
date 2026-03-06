@@ -559,6 +559,8 @@ function submitRegister() {
 
 .container {
   background: v-bind(loginOpacity);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding-left: 40px;
   padding-right: 40px;
   display: flex;
@@ -566,64 +568,72 @@ function submitRegister() {
   justify-content: center;
   width: 450px;
   height: 100%;
-  border-left: 1px solid var(--login-border);
-  box-shadow: var(--el-box-shadow-light);
+  border-left: none;
+  box-shadow: var(--md-sys-elevation-2);
   @media (max-width: 1024px) {
-    padding: 20px 18px;
-    width: 384px;
+    padding: 24px 20px;
+    width: 400px;
     margin-left: 18px;
   }
   @media (max-width: 767px) {
-    border: 1px solid var(--login-border);
-    padding: 20px 18px;
-    border-radius: 6px;
+    border: none;
+    padding: 32px 24px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
     height: fit-content;
     width: 100%;
     margin-right: 18px;
     margin-left: 18px;
+    box-shadow: var(--md-sys-elevation-3);
   }
 
   .btn {
-    height: 36px;
+    height: 40px;
     width: 100%;
-    border-radius: 6px;
+    border-radius: var(--md-sys-shape-corner-full);
+    font: var(--md-sys-typescale-label-large);
+    margin-top: 4px;
   }
 
   .form-desc {
-    margin-top: 5px;
-    margin-bottom: 18px;
-    color: var(--form-desc-color);
+    margin-top: 8px;
+    margin-bottom: 20px;
+    color: var(--md-sys-color-on-surface-variant);
+    font: var(--md-sys-typescale-body-medium);
   }
 
   .form-title {
-    font-weight: bold;
-    font-size: 22px !important;
+    font: var(--md-sys-typescale-headline-medium);
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
   }
 
   .switch {
-    margin-top: 20px;
+    margin-top: 24px;
     text-align: center;
+    font: var(--md-sys-typescale-body-medium);
+    color: var(--md-sys-color-on-surface-variant);
 
     span {
-      color: var(--login-switch-color);
+      color: var(--md-sys-color-primary);
       cursor: pointer;
+      font-weight: 500;
     }
   }
 
   .oauth-container {
-    margin-top: 16px;
+    margin-top: 20px;
   }
 
   .oauth-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--el-text-color-placeholder);
-    font-size: 12px;
-    margin-bottom: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    font: var(--md-sys-typescale-label-medium);
+    margin-bottom: 16px;
 
     span {
-      padding: 0 8px;
+      padding: 0 12px;
     }
 
     &::before,
@@ -631,15 +641,15 @@ function submitRegister() {
       content: '';
       flex: 1;
       height: 1px;
-      background-color: var(--el-border-color-lighter);
+      background-color: var(--md-sys-color-outline-variant);
     }
 
     &::before {
-      margin-right: 12px;
+      margin-right: 0;
     }
 
     &::after {
-      margin-left: 12px;
+      margin-left: 0;
     }
   }
 
@@ -650,6 +660,10 @@ function submitRegister() {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-full) !important;
+    border: 1px solid var(--md-sys-color-outline) !important;
+    font: var(--md-sys-typescale-label-large);
   }
 
   .oauth-icon {
@@ -657,7 +671,8 @@ function submitRegister() {
   }
 
   .oauth-alert {
-    margin-top: 12px;
+    margin-top: 16px;
+    border-radius: var(--md-sys-shape-corner-medium);
   }
 
   .passkey-container {
@@ -670,25 +685,29 @@ function submitRegister() {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-full) !important;
+    border: 1px solid var(--md-sys-color-outline) !important;
+    font: var(--md-sys-typescale-label-large);
   }
 
   :deep(.el-input__wrapper) {
-    border-radius: 6px;
-    background: var(--el-bg-color);
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    background: transparent;
   }
 
   .email-input :deep(.el-input__wrapper) {
-    border-radius: 6px 0 0 6px;
-    background: var(--el-bg-color);
+    border-radius: var(--md-sys-shape-corner-extra-small) 0 0 var(--md-sys-shape-corner-extra-small);
+    background: transparent;
   }
 
   .el-input {
-    height: 38px;
+    height: 48px;
     width: 100%;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 
     :deep(.el-input__inner) {
-      height: 36px;
+      height: 46px;
     }
   }
 }
@@ -733,7 +752,7 @@ function submitRegister() {
 
 
 #login-box {
-  background: linear-gradient(to bottom, #2980b9, #6dd5fa, #fff);
+  background: linear-gradient(135deg, #1565c0 0%, #42a5f5 30%, #90caf9 60%, #e3f2fd 100%);
   font: 100% Arial, sans-serif;
   height: 100%;
   margin: 0;

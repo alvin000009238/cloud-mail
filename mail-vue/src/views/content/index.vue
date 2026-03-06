@@ -221,10 +221,10 @@ const handleDelete = () => {
 }
 
 .header-actions {
-  padding: 9px 15px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 8px;
   box-shadow: var(--header-actions-border);
   font-size: 18px;
   .star {
@@ -235,6 +235,18 @@ const handleDelete = () => {
   }
   .icon {
     cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--md-sys-shape-corner-full);
+    color: var(--md-sys-color-on-surface-variant);
+    transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+    }
   }
 }
 
@@ -255,9 +267,10 @@ const handleDelete = () => {
   }
 
   .email-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    font: var(--md-sys-typescale-headline-small);
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--md-sys-color-on-surface);
   }
 
   .htm-scrollbar {
@@ -268,11 +281,11 @@ const handleDelete = () => {
     flex-direction: column;
 
     .att {
-      margin-top: 30px;
-      margin-bottom: 30px;
-      border: 1px solid var(--light-border-color);
-      padding: 14px;
-      border-radius: 6px;
+      margin-top: 24px;
+      margin-bottom: 24px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      padding: 16px;
+      border-radius: var(--md-sys-shape-corner-medium);
       width: fit-content;
       .att-box {
         min-width: min(410px,calc(100vw - 60px));

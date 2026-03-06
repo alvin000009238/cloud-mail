@@ -17,7 +17,8 @@ const exclude = [
 	'/init',
 	'/public/genToken',
 	'/oauth',
-	'/passkey/login'
+	'/passkey/login',
+	'/telegram'
 ];
 
 const requirePerms = [

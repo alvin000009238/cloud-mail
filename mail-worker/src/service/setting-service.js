@@ -17,6 +17,9 @@ const settingService = {
 	async refresh(c) {
 		const settingRow = await orm(c).select().from(setting).get();
 		settingRow.resendTokens = JSON.parse(settingRow.resendTokens);
+		settingRow.emailPrefixFilter = settingRow.emailPrefixFilter
+			? settingRow.emailPrefixFilter.split(',').map(s => s.trim()).filter(Boolean)
+			: [];
 		c.set('setting', settingRow);
 		await c.env.kv.put(KvConst.SETTING, JSON.stringify(settingRow));
 	},
@@ -143,19 +146,19 @@ const settingService = {
 		return background;
 	},
 
-        async websiteConfig(c) {
+	async websiteConfig(c) {
 
-                const settingRow = await this.get(c, true)
+		const settingRow = await this.get(c, true)
 
-                const oauthProviders = [];
+		const oauthProviders = [];
 
-                if (c.env.githubClientId && c.env.githubClientSecret && c.env.githubRedirectUri) {
-                        oauthProviders.push({ provider: 'github', name: 'GitHub' });
-                }
+		if (c.env.githubClientId && c.env.githubClientSecret && c.env.githubRedirectUri) {
+			oauthProviders.push({ provider: 'github', name: 'GitHub' });
+		}
 
-                return {
-                        register: settingRow.register,
-                        title: settingRow.title,
+		return {
+			register: settingRow.register,
+			title: settingRow.title,
 			manyEmail: settingRow.manyEmail,
 			addEmail: settingRow.addEmail,
 			autoRefreshTime: settingRow.autoRefreshTime,
@@ -176,12 +179,12 @@ const settingService = {
 			noticeDuration: settingRow.noticeDuration,
 			noticePosition: settingRow.noticePosition,
 			noticeWidth: settingRow.noticeWidth,
-                        noticeOffset: settingRow.noticeOffset,
-                        notice: settingRow.notice,
-                        loginDomain: settingRow.loginDomain,
-                        oauthProviders
-                };
-        }
+			noticeOffset: settingRow.noticeOffset,
+			notice: settingRow.notice,
+			loginDomain: settingRow.loginDomain,
+			oauthProviders
+		};
+	}
 };
 
 export default settingService;

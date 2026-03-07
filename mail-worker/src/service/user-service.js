@@ -96,10 +96,13 @@ const userService = {
 	},
 
 	async physicsDelete(c, params) {
-		const { userId } = params
-		await accountService.physicsDeleteByUserIds(c, [userId])
-		await orm(c).delete(user).where(eq(user.userId, userId)).run();
-		await c.env.kv.delete(kvConst.AUTH_INFO + userId);
+		const { userIds } = params
+		const ids = userIds.split(',').map(id => Number(id)).filter(id => !isNaN(id));
+		await accountService.physicsDeleteByUserIds(c, ids)
+		for (const id of ids) {
+			await orm(c).delete(user).where(eq(user.userId, id)).run();
+			await c.env.kv.delete(kvConst.AUTH_INFO + id);
+		}
 	},
 
 	async list(c, params) {

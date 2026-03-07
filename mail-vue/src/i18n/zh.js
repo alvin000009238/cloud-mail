@@ -340,6 +340,7 @@ const zh = {
     passkeyAdd: '新增 Passkey',
     passkeyRegisterSuccess: 'Passkey 註冊成功',
     passkeyRegisterFailed: 'Passkey 註冊失敗',
-    orUsePasskey: '或使用 Passkey'
+    orUsePasskey: '或使用 Passkey',
+    refresh: '重新整理'
 }
 export default zh

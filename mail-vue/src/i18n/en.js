@@ -330,7 +330,8 @@ const en = {
     passkeyAdd: 'Add Passkey',
     passkeyRegisterSuccess: 'Passkey registered successfully',
     passkeyRegisterFailed: 'Passkey registration failed',
-    orUsePasskey: 'Or use Passkey'
+    orUsePasskey: 'Or use Passkey',
+    refresh: 'Refresh'
 }
 
 export default en

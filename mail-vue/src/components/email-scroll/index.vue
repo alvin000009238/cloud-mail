@@ -11,13 +11,22 @@
       <div class="header-left" :style="'padding-left:' + actionLeft">
 
         <slot name="first"></slot>
-        <Icon class="icon reload" icon="ion:reload" width="18" height="18" @click="refresh"/>
-        <Icon v-perm="'email:delete'" class="icon delete" icon="uiw:delete" width="16" height="16"
+        <div class="pill pill-tonal" @click="refresh">
+          <Icon icon="material-symbols:refresh-rounded" width="18" height="18"/>
+          <span>{{ $t('refresh') }}</span>
+        </div>
+        <div class="pill pill-tonal" v-perm="'email:delete'"
               v-if="getSelectedMailsIds().length > 0"
-              @click="handleDelete"/>
-        <Icon v-perm="'email:delete'" class="icon delete" icon="fluent:mail-read-20-regular" width="21" height="21"
+              @click="handleDelete">
+          <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18"/>
+          <span>{{ $t('delete') }}</span>
+        </div>
+        <div class="pill pill-tonal" v-perm="'email:delete'"
               v-if="getSelectedMailsIds().length > 0 && showUnread"
-              @click="handleRead"/>
+              @click="handleRead">
+          <Icon icon="material-symbols:mark-email-read-outline-rounded" width="18" height="18"/>
+          <span>{{ $t('markAsRead') }}</span>
+        </div>
       </div>
 
       <div class="header-right">
@@ -1227,8 +1236,8 @@ function loadData() {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 15px;
-  padding: 3px 15px;
+  gap: 12px;
+  padding: 6px 15px;
   box-shadow: var(--header-actions-border);
 
   .header-left {
@@ -1236,8 +1245,8 @@ function loadData() {
     flex-wrap: wrap;
     align-items: center;
     position: relative;
-    column-gap: 20px;
-    row-gap: 8px;
+    column-gap: 8px;
+    row-gap: 6px;
     padding-left: 2px;
     color: var(--md-sys-color-on-surface);;
   }
@@ -1263,6 +1272,34 @@ function loadData() {
   .more-icon {
     margin-top: 8px;
     margin-left: 15px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 14px 0 10px;
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: pointer;
+    font: var(--md-sys-typescale-label-large);
+    white-space: nowrap;
+    transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    user-select: none;
+  }
+
+  .pill-tonal {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-1);
+      background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+    }
+
+    &:active {
+      box-shadow: none;
+    }
   }
 }
 

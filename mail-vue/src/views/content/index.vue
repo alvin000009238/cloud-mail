@@ -13,17 +13,8 @@
           <Icon :icon="email.isStar ? 'material-symbols:star-rounded' : 'material-symbols:star-outline-rounded'" width="18" height="18"/>
           <span>{{ email.isStar ? $t('starred') : $t('star') }}</span>
         </div>
-        <div class="pill pill-tonal" v-if="emailStore.contentData.showReply" v-perm="'email:send'" @click="openReply">
-          <Icon icon="material-symbols:reply-rounded" width="18" height="18"/>
-          <span>{{ $t('reply') }}</span>
-        </div>
-        <div class="pill pill-tonal" v-if="emailStore.contentData.showReply" v-perm="'email:send'" @click="openForward">
-          <Icon icon="material-symbols:forward-rounded" width="18" height="18"/>
-          <span>{{ $t('forward') }}</span>
-        </div>
       </div>
     </div>
-    <div></div>
     <el-scrollbar class="scrollbar">
       <div class="container">
         <div class="email-title">
@@ -35,7 +26,7 @@
               <div class="send"><span class="send-source">{{$t('from')}}</span>
                 <div class="send-name">
                   <span class="send-name-title">{{ email.name }}</span>
-                  <span><{{ email.sendEmail }}></span>
+                  <span>&lt;{{ email.sendEmail }}&gt;</span>
                 </div>
               </div>
               <div class="receive"><span class="source">{{$t('recipient')}}</span><span class="receive-email">{{  formateReceive(email.recipient) }}</span></div>
@@ -78,6 +69,16 @@
         </div>
       </div>
     </el-scrollbar>
+    <div class="bottom-actions" v-if="emailStore.contentData.showReply" v-perm="'email:send'">
+      <div class="pill pill-tonal" @click="openReply">
+        <Icon icon="material-symbols:reply-rounded" width="18" height="18"/>
+        <span>{{ $t('reply') }}</span>
+      </div>
+      <div class="pill pill-tonal" @click="openForward">
+        <Icon icon="material-symbols:forward-rounded" width="18" height="18"/>
+        <span>{{ $t('forward') }}</span>
+      </div>
+    </div>
     <el-image-viewer
         v-if="showPreview"
         :url-list="srcList"
@@ -231,6 +232,8 @@ const handleDelete = () => {
 .box {
   height: 100%;
   overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
 .header-actions {
@@ -318,8 +321,49 @@ const handleDelete = () => {
 }
 
 
+.bottom-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--md-sys-color-surface-container);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 24px 0 16px;
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: pointer;
+    font: var(--md-sys-typescale-label-large);
+    white-space: nowrap;
+    transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    user-select: none;
+    flex: 1;
+    max-width: 240px;
+    justify-content: center;
+  }
+
+  .pill-tonal {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-1);
+      background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 8%, var(--md-sys-color-secondary-container));
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+  }
+}
+
 .scrollbar {
-  height: calc(100% - 38px);
+  height: 100%;
   width: 100%;
 }
 

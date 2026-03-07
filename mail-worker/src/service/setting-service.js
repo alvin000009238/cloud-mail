@@ -17,9 +17,11 @@ const settingService = {
 	async refresh(c) {
 		const settingRow = await orm(c).select().from(setting).get();
 		settingRow.resendTokens = JSON.parse(settingRow.resendTokens);
-		settingRow.emailPrefixFilter = settingRow.emailPrefixFilter
-			? settingRow.emailPrefixFilter.split(',').map(s => s.trim()).filter(Boolean)
-			: [];
+		settingRow.emailPrefixFilter = Array.isArray(settingRow.emailPrefixFilter)
+			? settingRow.emailPrefixFilter
+			: (settingRow.emailPrefixFilter
+				? settingRow.emailPrefixFilter.split(',').map(s => s.trim()).filter(Boolean)
+				: []);
 		c.set('setting', settingRow);
 		await c.env.kv.put(KvConst.SETTING, JSON.stringify(settingRow));
 	},
@@ -99,6 +101,9 @@ const settingService = {
 			if (!resendTokens[domain]) delete resendTokens[domain];
 		});
 		params.resendTokens = JSON.stringify(resendTokens);
+		if (Array.isArray(params.emailPrefixFilter)) {
+			params.emailPrefixFilter = params.emailPrefixFilter.join(',');
+		}
 		await orm(c).update(setting).set({ ...params }).returning().get();
 		await this.refresh(c);
 	},

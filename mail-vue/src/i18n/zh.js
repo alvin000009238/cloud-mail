@@ -341,6 +341,7 @@ const zh = {
     passkeyRegisterSuccess: 'Passkey 註冊成功',
     passkeyRegisterFailed: 'Passkey 註冊失敗',
     orUsePasskey: '或使用 Passkey',
-    refresh: '重新整理'
+    refresh: '重新整理',
+    changeSender: '切換寄件人'
 }
 export default zh

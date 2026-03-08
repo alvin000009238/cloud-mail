@@ -331,7 +331,8 @@ const en = {
     passkeyRegisterSuccess: 'Passkey registered successfully',
     passkeyRegisterFailed: 'Passkey registration failed',
     orUsePasskey: 'Or use Passkey',
-    refresh: 'Refresh'
+    refresh: 'Refresh',
+    changeSender: 'Change Sender'
 }
 
 export default en

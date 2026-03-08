@@ -6,7 +6,7 @@
     </div>
     <div v-perm="'email:send'" class="writer-box" @click="openSend">
       <div class="writer">
-        <Icon icon="material-symbols:edit-outline-sharp" width="22" height="22"/>
+        <Icon icon="material-symbols:edit-outline-sharp" width="20" height="20"/>
       </div>
     </div>
     <div class="toolbar">
@@ -390,9 +390,9 @@ function formatName(email) {
   margin-left: 8px;
 
   .writer {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--md-sys-shape-corner-large);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-medium);
     color: var(--md-sys-color-on-primary-container);
     background: var(--md-sys-color-primary-container);
     box-shadow: var(--md-sys-elevation-3);

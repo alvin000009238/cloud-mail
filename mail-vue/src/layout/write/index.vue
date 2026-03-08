@@ -6,9 +6,32 @@
           <span class="title-text">
             <Icon icon="hugeicons:quill-write-01" width="28" height="28"/>
           </span>
-          <span class="sender">{{ $t('sender') }}:</span>
-          <span class="sender-name">{{ form.name }}</span>
-          <span class="send-email"><{{ form.sendEmail }}></span>
+          <el-dropdown v-if="canChangeSender" trigger="click" @command="changeSender" max-height="300">
+            <div class="sender-dropdown">
+              <span class="sender">{{ $t('sender') }}:</span>
+              <span class="sender-name">{{ form.name }}</span>
+              <span class="send-email">&lt;{{ form.sendEmail }}&gt;</span>
+              <Icon icon="mingcute:down-small-fill" width="18" height="18" class="dropdown-arrow" />
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                    v-for="acc in senderAccounts"
+                    :key="acc.accountId"
+                    :command="acc"
+                    :class="{ 'is-active-sender': acc.accountId === form.accountId }"
+                >
+                  <span class="dropdown-acc-name">{{ acc.name }}</span>
+                  <span class="dropdown-acc-email">&lt;{{ acc.email }}&gt;</span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <div v-else class="sender-static">
+            <span class="sender">{{ $t('sender') }}:</span>
+            <span class="sender-name">{{ form.name }}</span>
+            <span class="send-email">&lt;{{ form.sendEmail }}&gt;</span>
+          </div>
         </div>
         <div @click="close" style="cursor: pointer;">
           <Icon icon="material-symbols-light:close-rounded" width="22" height="22"/>
@@ -95,6 +118,7 @@
 <script setup>
 import tinyEditor from '@/components/tiny-editor/index.vue'
 import {h, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, computed} from "vue";
+import {accountList as fetchAccountList} from "@/request/account.js";
 import {Icon} from "@iconify/vue";
 import {useUserStore} from "@/store/user.js";
 import {emailSend} from "@/request/email.js";
@@ -113,7 +137,7 @@ import db from "@/db/db.js";
 import dayjs from "dayjs";
 import {useI18n} from "vue-i18n";
 import router from "@/router/index.js";
-import {ElMessageBox} from "element-plus";
+import {ElMessageBox, ElMessage, ElNotification} from "element-plus";
 
 defineExpose({
   open,
@@ -158,6 +182,9 @@ const form = reactive({
   attachments: [],
   draftId: null,
 })
+
+const senderAccounts = ref([])
+const canChangeSender = computed(() => form.sendType !== 'reply' && form.sendType !== 'forward')
 
 const selectRecipientList = ref([])
 
@@ -506,6 +533,18 @@ function formatImage(content) {
   return content.replace(/{{domain}}/g, toOssDomain(domain) + '/');
 }
 
+function changeSender(acc) {
+  form.sendEmail = acc.email;
+  form.accountId = acc.accountId;
+  form.name = acc.name;
+}
+
+function loadAccounts() {
+  fetchAccountList(0, 200, null).then(list => {
+    senderAccounts.value = list;
+  }).catch(() => {})
+}
+
 function open() {
   if (!accountStore.currentAccount.email) {
     form.sendEmail = userStore.user.email;
@@ -516,6 +555,7 @@ function open() {
     form.accountId = accountStore.currentAccount.accountId;
     form.name = accountStore.currentAccount.name;
   }
+  loadAccounts();
   show.value = true;
   editor.value.focus()
 }
@@ -615,6 +655,29 @@ function close() {
 .write-select .el-select-dropdown {
   min-width: 0 !important;
 }
+
+.el-dropdown-menu__item.is-active-sender {
+  background-color: var(--el-dropdown-menu-hover-fill);
+  color: var(--el-dropdown-menu-hover-color);
+}
+
+.el-dropdown-menu__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 6px 12px;
+  line-height: 1.2;
+}
+
+.el-dropdown-menu__item .dropdown-acc-name {
+  font-weight: bold;
+  color: var(--el-text-color-primary);
+}
+
+.el-dropdown-menu__item .dropdown-acc-email {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
 </style>
 <style scoped lang="scss">
 .send {
@@ -658,20 +721,51 @@ function close() {
 
       .title-left {
         align-items: center;
-        display: grid;
-        grid-template-columns: auto auto auto 1fr;
+        display: flex;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .title-text {
+        flex-shrink: 0;
+      }
+
+      .sender-dropdown {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: var(--md-sys-shape-corner-small);
+        transition: background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+        min-width: 0;
+        overflow: hidden;
+
+        &:hover {
+          background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+        }
+
+        .dropdown-arrow {
+          flex-shrink: 0;
+          color: var(--md-sys-color-on-surface-variant);
+        }
+      }
+
+      .sender-static {
+        display: flex;
+        align-items: center;
+        padding: 4px 8px;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .sender {
-        margin-left: 8px;
+        flex-shrink: 0;
       }
 
       .sender-name {
         margin-left: 8px;
         font-weight: bold;
+        flex-shrink: 0;
       }
 
       .send-email {

@@ -33,16 +33,8 @@ export async function email(message, env, ctx) {
 		}
 
 
-		const reader = message.raw.getReader();
-		let content = '';
-
-		while (true) {
-			const { done, value } = await reader.read();
-			if (done) break;
-			content += new TextDecoder().decode(value);
-		}
-
-		const email = await PostalMime.parse(content);
+		const rawBytes = await new Response(message.raw).arrayBuffer();
+		const email = await PostalMime.parse(rawBytes);
 
 		const account = await accountService.selectByEmailIncludeDel({ env: env }, message.to);
 
@@ -54,7 +46,7 @@ export async function email(message, env, ctx) {
 		let userRow = {}
 
 		if (account) {
-			 userRow = await userService.selectByIdIncludeDel({ env: env }, account.userId);
+			userRow = await userService.selectByIdIncludeDel({ env: env }, account.userId);
 		}
 
 		if (account && userRow.email !== env.admin) {
@@ -66,7 +58,7 @@ export async function email(message, env, ctx) {
 				return;
 			}
 
-			if(roleService.isBanEmail(banEmail, email.from.address)) {
+			if (roleService.isBanEmail(banEmail, email.from.address)) {
 				message.setReject('The recipient is disabled from receiving emails.');
 				return;
 			}
@@ -75,7 +67,7 @@ export async function email(message, env, ctx) {
 
 
 		if (!email.to) {
-			email.to = [{ address: message.to, name: emailUtils.getName(message.to)}]
+			email.to = [{ address: message.to, name: emailUtils.getName(message.to) }]
 		}
 
 		const toName = email.to.find(item => item.address === message.to)?.name || '';

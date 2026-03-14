@@ -1,8 +1,8 @@
 <template>
   <div class="account-box">
     <div class="head-opt">
-      <Icon v-perm="'account:add'" class="icon add" icon="ion:add-outline" width="20" height="20" @click="add"/>
-      <Icon class="icon refresh" icon="ion:reload" width="20" height="20" @click="refresh"/>
+      <Icon v-perm="'account:add'" class="icon add" icon="ion:add-outline" width="18" height="18" @click="add"/>
+      <Icon class="icon refresh" icon="ion:reload" width="18" height="18" @click="refresh"/>
     </div>
     <el-scrollbar class="scrollbar" ref="scrollbarRef">
       <div v-infinite-scroll="getAccountList" :infinite-scroll-distance="600" :infinite-scroll-immediate="false">
@@ -528,8 +528,8 @@ path[fill="#ffdda1"] {
     .icon {
       cursor: pointer;
       color: var(--md-sys-color-on-surface-variant);
-      width: 40px;
-      height: 40px;
+      width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -543,6 +543,11 @@ path[fill="#ffdda1"] {
 
     .refresh {
       margin-left: 0;
+      color: var(--el-color-primary);
+
+      &:hover {
+        background: color-mix(in srgb, var(--el-color-primary) 12%, transparent);
+      }
     }
 
     .add {

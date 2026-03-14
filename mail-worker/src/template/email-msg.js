@@ -1,8 +1,17 @@
 import emailUtils from '../utils/email-utils';
+import otpUtils from '../utils/otp-utils';
 
 export default function emailMsgTemplate(email, tgMsgTo, tgMsgFrom, tgMsgText) {
 
-	let template = `<b>${email.subject}</b>`
+	const plainText = emailUtils.formatText(email.text) || emailUtils.htmlToText(email.content);
+	const otpCode = otpUtils.extractOtp(email.subject, plainText);
+
+	// If OTP detected, wrap it with <code> inline within subject
+	const displaySubject = otpCode
+		? email.subject.replace(otpCode, `<code>${otpCode}</code>`)
+		: email.subject;
+
+	let template = `<b>${displaySubject}</b>`
 
 		if (tgMsgFrom === 'only-name') {
 			template += `
@@ -26,9 +35,14 @@ To：\u200B${email.toEmail}`
 To：\u200B${email.toEmail}`
 	}
 
-	const text = (emailUtils.formatText(email.text) || emailUtils.htmlToText(email.content))
+	let text = plainText
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;');
+
+	// If OTP detected, wrap it with <code> inline within body text
+	if (otpCode) {
+		text = text.replace(otpCode, `<code>${otpCode}</code>`);
+	}
 
 	if(tgMsgText === 'show') {
 		template += `

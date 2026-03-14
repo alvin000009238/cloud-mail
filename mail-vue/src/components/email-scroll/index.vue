@@ -11,9 +11,8 @@
       <div class="header-left" :style="'padding-left:' + actionLeft">
 
         <slot name="first"></slot>
-        <div class="pill pill-tonal" @click="refresh">
-          <Icon icon="material-symbols:refresh-rounded" width="18" height="18"/>
-          <span>{{ $t('refresh') }}</span>
+        <div class="pill pill-refresh" @click="refresh">
+          <Icon icon="material-symbols:refresh-rounded" width="20" height="20"/>
         </div>
         <div class="pill pill-tonal" v-perm="'email:delete'"
               v-if="getSelectedMailsIds().length > 0"
@@ -1299,6 +1298,21 @@ function loadData() {
 
     &:active {
       box-shadow: none;
+    }
+  }
+
+  .pill-refresh {
+    padding: 0;
+    width: 32px;
+    justify-content: center;
+    color: var(--el-color-primary);
+
+    &:hover {
+      background: color-mix(in srgb, var(--el-color-primary) 12%, transparent);
+    }
+
+    &:active {
+      background: color-mix(in srgb, var(--el-color-primary) 18%, transparent);
     }
   }
 }
